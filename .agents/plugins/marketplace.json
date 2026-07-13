@@ -1,0 +1,20 @@
+{
+  "name": "aeopress",
+  "interface": {
+    "displayName": "aeo.press"
+  },
+  "plugins": [
+    {
+      "name": "aeopress",
+      "source": {
+        "source": "local",
+        "path": "./codex/aeopress"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

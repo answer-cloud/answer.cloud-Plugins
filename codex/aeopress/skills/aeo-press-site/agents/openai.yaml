@@ -1,0 +1,11 @@
+interface:
+  display_name: "AEO Press Site"
+  short_description: "Author, CMS-configure, and deploy static sites to aeo.press"
+  default_prompt: "Use this skill to author AEO-friendly static sites, define editable CMS collections, and deploy through the aeopress MCP workflow."
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "aeopress"
+      description: "aeo.press hosting + CMS MCP server"
+      transport: "streamable_http"
+      url: "https://aeo.press/mcp"

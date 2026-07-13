@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "aeopress": {
+      "type": "http",
+      "url": "https://aeo.press/mcp",
+      "headers": {
+        "Authorization": "Bearer ${AEOPRESS_API_KEY}"
+      }
+    }
+  }
+}

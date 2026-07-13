@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "aeopress": {
+      "type": "http",
+      "url": "https://aeo.press/mcp",
+      "bearer_token_env_var": "AEOPRESS_API_KEY"
+    }
+  }
+}
