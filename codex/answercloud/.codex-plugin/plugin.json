@@ -1,0 +1,44 @@
+{
+  "name": "answercloud",
+  "version": "1.0.0",
+  "description": "Author and deploy AEO-friendly static sites to answer.cloud: the answer-cloud-site skill plus the answercloud MCP server (hosting deploys + CMS). Set AEOPRESS_API_KEY to your aeo_host_ key.",
+  "author": {
+    "name": "answer.cloud",
+    "email": "jared@edgarallan.com",
+    "url": "https://answer.cloud"
+  },
+  "homepage": "https://answer.cloud",
+  "repository": "https://github.com/jfals82/answer.cloud-Plugins",
+  "license": "MIT",
+  "keywords": [
+    "answer-cloud",
+    "aeo",
+    "static-site",
+    "hosting",
+    "cms",
+    "astro",
+    "answer-engine-optimization"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Answer Cloud",
+    "shortDescription": "Author, CMS-configure, and deploy static sites to answer.cloud",
+    "longDescription": "Build AEO-friendly static sites with Astro, define editable CMS collection templates, and deploy to {slug}.answer.cloud or an ai. companion subdomain through the answercloud MCP workflow. answer.cloud generates the answer-engine layer (llms.txt, sitemaps, JSON-LD, text mirrors, chat widget) at deploy time.",
+    "developerName": "answer.cloud",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://answer.cloud",
+    "defaultPrompt": [
+      "Build and deploy an AEO-friendly static site to answer.cloud",
+      "Set up editable CMS collection templates for my site",
+      "Create an AI companion site for my existing website"
+    ],
+    "brandColor": "#111111",
+    "screenshots": []
+  }
+}

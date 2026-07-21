@@ -1,6 +1,6 @@
-# aeopress MCP tool reference
+# answercloud MCP tool reference
 
-Server: `https://aeo.press/mcp`
+Server: `https://answer.cloud/mcp`
 
 Auth: send `Authorization: Bearer aeo_host_...`
 
@@ -20,7 +20,7 @@ return `deploys_remaining_today`.
 - Params: `slug` required, `name` optional
 - Returns: the site record and live URL
 - Notes: Use lowercase letters, digits, and hyphens. If the org has no card on file, expect
-  `card_required` and direct the user to complete signup at `https://aeo.press/site`.
+  `card_required` and direct the user to complete signup at `https://answer.cloud/site`.
 
 ## start_deploy
 
@@ -114,7 +114,7 @@ concrete next step.
 ### preview_cms_entry
 
 - Params: `site_slug`, `collection_key`, `entry_id`
-- Returns: `preview_url` (private in-aeo.press preview of staged draft) and `template_status`.
+- Returns: `preview_url` (private in-answer.cloud preview of staged draft) and `template_status`.
   Does not return full HTML.
 
 ### publish_cms_entry
@@ -127,15 +127,6 @@ concrete next step.
 
 - Params: `site_slug`, `collection_key`, `entry_id`
 - Returns: updated `entry` status and `changed_paths[]`. Re-renders the collection index.
-
-### delete_cms_entry
-
-- Params: `site_slug`, `collection_key`, `entry_id`
-- Returns: `deleted: true`, `entry_id`, `collection_key`, `changed_paths[]` (removed live page,
-  text mirror, re-rendered collection index).
-- Notes: **Permanent and irreversible** — it removes the live page and destroys the record.
-  Prefer `archive_cms_entry`, which keeps the entry recoverable. Call this only when the user
-  explicitly asks to permanently delete an entry.
 
 ### republish_cms
 

@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "aeopress": {
+    "answercloud": {
       "type": "http",
-      "url": "https://aeo.press/mcp",
+      "url": "https://answer.cloud/mcp",
       "headers": {
         "Authorization": "Bearer ${AEOPRESS_API_KEY}"
       }

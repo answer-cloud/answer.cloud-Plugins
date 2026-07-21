@@ -1,14 +1,14 @@
 {
-  "name": "aeopress",
+  "name": "answercloud",
   "interface": {
-    "displayName": "aeo.press"
+    "displayName": "answer.cloud"
   },
   "plugins": [
     {
-      "name": "aeopress",
+      "name": "answercloud",
       "source": {
         "source": "local",
-        "path": "./codex/aeopress"
+        "path": "./codex/answercloud"
       },
       "policy": {
         "installation": "AVAILABLE",

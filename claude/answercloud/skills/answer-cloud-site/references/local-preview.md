@@ -1,17 +1,17 @@
-# The official CMS template (jfals82/aeopress-cms-template)
+# The official CMS template (jfals82/answercloud-cms-template)
 
 A complete, tested Astro project hosted at
-[github.com/jfals82/aeopress-cms-template](https://github.com/jfals82/aeopress-cms-template).
-It is the required starting point for any aeo.press CMS work — scaffold it, don't rebuild it:
+[github.com/jfals82/answercloud-cms-template](https://github.com/jfals82/answercloud-cms-template).
+It is the required starting point for any answer.cloud CMS work — scaffold it, don't rebuild it:
 
 ```sh
-npm create astro@latest -- --template jfals82/aeopress-cms-template my-cms-site
+npm create astro@latest -- --template jfals82/answercloud-cms-template my-cms-site
 cd my-cms-site
 npm install
 npm run dev     # → http://localhost:4321/ is the CMS preview hub
 ```
 
-(`npx degit jfals82/aeopress-cms-template my-cms-site` or a plain `git clone` also work.)
+(`npx degit jfals82/answercloud-cms-template my-cms-site` or a plain `git clone` also work.)
 
 Modeled on Astro's blog example: you edit source files, everything live-reloads, `npm run
 build` emits the deployable output.
@@ -22,7 +22,7 @@ The same layout components are rendered twice:
 
 - **Preview routes** (`src/pages/index.astro` + `src/pages/cms-preview/…`) pass sample content
   from `sample-entries.mjs`, converted with `server-markup.mjs` so the substitution is exactly
-  what aeo.press does at publish time (escaped text, `July 12, 2026` dates, markdown→HTML
+  what answer.cloud does at publish time (escaped text, `July 12, 2026` dates, markdown→HTML
   content, the literal `<ul class="entries">` markup, `p.empty`, `nav.aeo-related`).
 - **Generator pages** (`src/pages/cms-templates/…`) pass literal marker strings
   (`<!-- aeo:title -->` …). After `astro build`, `scripts/relocate-cms-templates.mjs` moves the
@@ -53,7 +53,7 @@ There is no `/cms-preview/{key}/index/` route — `[key]/index.astro` builds to
 `CmsShowTemplate` / `CmsIndexTemplate` take:
 
 - **Text props** (`title`, `summary`, `publishedAt`, `name`): plain text. Astro escapes them —
-  matching how aeo.press escapes those markers. Generator pages pass marker strings here; the
+  matching how answer.cloud escapes those markers. Generator pages pass marker strings here; the
   relocate script un-escapes them (`&lt;!-- aeo:x --&gt;` → `<!-- aeo:x -->`).
 - **HTML props** (`contentHtml`, `entriesHtml`): raw HTML rendered with `set:html`.
 

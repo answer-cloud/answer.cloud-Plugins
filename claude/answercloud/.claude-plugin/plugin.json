@@ -1,0 +1,13 @@
+{
+  "name": "answercloud",
+  "description": "Author and deploy AEO-friendly static sites to answer.cloud: the answer-cloud-site skill plus the answercloud MCP server (hosting deploys + CMS). Set AEOPRESS_API_KEY to your aeo_host_ key.",
+  "version": "1.0.0",
+  "author": {
+    "name": "answer.cloud",
+    "email": "jared@edgarallan.com"
+  },
+  "homepage": "https://answer.cloud",
+  "repository": "https://github.com/jfals82/answer.cloud-Plugins",
+  "license": "MIT",
+  "keywords": ["answer-cloud", "aeo", "static-site", "hosting", "cms", "astro", "answer-engine-optimization"]
+}
