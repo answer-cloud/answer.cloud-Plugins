@@ -4,7 +4,7 @@
       "type": "http",
       "url": "https://answer.cloud/mcp",
       "headers": {
-        "Authorization": "Bearer ${AEOPRESS_API_KEY}"
+        "Authorization": "Bearer ${ANSWERCLOUD_API_KEY}"
       }
     }
   }

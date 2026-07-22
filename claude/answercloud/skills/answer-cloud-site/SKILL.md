@@ -605,7 +605,7 @@ If this skill came from the **answercloud plugin** (Claude Code or Codex), the s
 already bundled — the user only needs to export the key and restart the session:
 
 ```sh
-export AEOPRESS_API_KEY=aeo_host_YOUR_KEY
+export ANSWERCLOUD_API_KEY=aeo_host_YOUR_KEY
 ```
 
 Manual setup without the plugin:
@@ -622,7 +622,7 @@ Manual setup without the plugin:
   ```toml
   [mcp_servers.answercloud]
   url = "https://answer.cloud/mcp"
-  bearer_token_env_var = "AEOPRESS_API_KEY"
+  bearer_token_env_var = "ANSWERCLOUD_API_KEY"
   ```
 
 ## Verify the live result

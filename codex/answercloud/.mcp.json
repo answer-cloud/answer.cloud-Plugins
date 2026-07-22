@@ -3,7 +3,7 @@
     "answercloud": {
       "type": "http",
       "url": "https://answer.cloud/mcp",
-      "bearer_token_env_var": "AEOPRESS_API_KEY"
+      "bearer_token_env_var": "ANSWERCLOUD_API_KEY"
     }
   }
 }

@@ -16,7 +16,7 @@ Create a hosting API key in the [answer.cloud dashboard](https://answer.cloud) u
 **Settings → API & MCP** (keys start with `aeo_host_`), then export it:
 
 ```sh
-export AEOPRESS_API_KEY=aeo_host_YOUR_KEY
+export ANSWERCLOUD_API_KEY=aeo_host_YOUR_KEY
 ```
 
 Add that line to your shell profile so new sessions pick it up.
@@ -31,7 +31,7 @@ Add that line to your shell profile so new sessions pick it up.
 ```
 
 The skill is invoked as `/answercloud:answer-cloud-site` (or automatically when you ask to build
-or deploy an answer.cloud site), and the `answercloud` MCP tools connect using `AEOPRESS_API_KEY`.
+or deploy an answer.cloud site), and the `answercloud` MCP tools connect using `ANSWERCLOUD_API_KEY`.
 
 ### Codex
 
@@ -41,7 +41,7 @@ codex plugin add answercloud@answercloud
 ```
 
 The `answer-cloud-site` skill appears under `/skills` (invoke with `$answer-cloud-site`), and the
-`answercloud` MCP server authenticates via `AEOPRESS_API_KEY`.
+`answercloud` MCP server authenticates via `ANSWERCLOUD_API_KEY`.
 
 ## Manual setup (no plugin)
 
@@ -57,7 +57,7 @@ The `answer-cloud-site` skill appears under `/skills` (invoke with `$answer-clou
   ```toml
   [mcp_servers.answercloud]
   url = "https://answer.cloud/mcp"
-  bearer_token_env_var = "AEOPRESS_API_KEY"
+  bearer_token_env_var = "ANSWERCLOUD_API_KEY"
   ```
 
 Then copy `claude/answercloud/skills/answer-cloud-site/` into `~/.claude/skills/` (Claude Code) or

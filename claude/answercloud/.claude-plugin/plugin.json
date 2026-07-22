@@ -1,6 +1,6 @@
 {
   "name": "answercloud",
-  "description": "Author and deploy AEO-friendly static sites to answer.cloud: the answer-cloud-site skill plus the answercloud MCP server (hosting deploys + CMS). Set AEOPRESS_API_KEY to your aeo_host_ key.",
+  "description": "Author and deploy AEO-friendly static sites to answer.cloud: the answer-cloud-site skill plus the answercloud MCP server (hosting deploys + CMS). Set ANSWERCLOUD_API_KEY to your aeo_host_ key.",
   "version": "1.0.0",
   "author": {
     "name": "answer.cloud",
