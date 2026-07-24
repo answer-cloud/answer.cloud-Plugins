@@ -30,11 +30,17 @@ The same layout components are rendered twice:
   prepends a `GENERATED FILE` banner, writes `aeo-cms.json` from `collections.mjs`, and strips
   every dev-only page from `dist/`.
 
-**CSS is bundled, never a public file**: `CmsShell.astro` does `import "../styles/cms.css"`, so
-Vite owns the stylesheet and edits hot-reload in every open preview. The relocate script then
-concatenates the hashed bundles the generated templates reference into `dist/assets/aeo-cms.css`
-and rewrites their `<link>` tags to that stable URL. Moving the CSS to `public/` breaks hot
-reload; hand-writing `<link>` tags breaks the rewrite — do neither.
+**CMS template CSS is bundled, never a public file**: `CmsShell.astro` does
+`import "../styles/cms.css"`, so Vite owns the stylesheet and edits hot-reload in every open
+preview. The relocate script then concatenates the hashed bundles the generated templates
+reference into `dist/assets/aeo-cms.css` and rewrites their `<link>` tags to that stable URL.
+Moving the CMS CSS to `public/` breaks hot reload; hand-writing `<link>` tags breaks the rewrite —
+do neither.
+
+The brand-matched chat theme is the deliberate exception because answer.cloud loads it by stable
+public URL in two different documents. Keep that separate file at
+`public/assets/answercloud-chat.css`; Astro copies it to
+`dist/assets/answercloud-chat.css`. Never import it into `CmsShell.astro`.
 
 Preview URLs (the hub links to these; keep them exact):
 
@@ -72,16 +78,20 @@ Keep this contract when editing the layouts; it is why one component serves both
    kitchen-sink (headings, lists, code, blockquote, table, image) and keep one entry without a
    summary. Update `src/styles/preview.css` only if the hub chrome needs it — it never ships.
 5. `README.md` — keep the "Which file do I edit?" table accurate.
+6. `public/assets/answercloud-chat.css` — derive it from the same design tokens as `cms.css`, but
+   keep every rule scoped to `#llmo-chat-button`, `#llmo-chat-iframe`, or
+   `#llmo-chat-widget`.
 
 ## Commands
 
 - `npm run dev` — preview hub at `/`, hot reload for layouts and `cms.css`.
 - `npm run build` — `astro build` + relocate: writes `.aeo/cms/**`, `aeo-cms.json`,
   `dist/assets/aeo-cms.css`; strips dev pages from `dist/`.
-- `npm run package` — build + assemble `.deploy/` (manifest, `.aeo/`, `assets/aeo-cms.css`
-  only) + write `site.zip`, ready for `start_deploy` → upload → `finalize_deploy`. This is the
-  `byo_cms` artifact shape; for a `hosting` site, ship all of `dist/` plus `.aeo/` and
-  `aeo-cms.json` per SKILL.md's packaging rules instead.
+- `npm run package` — build + assemble `.deploy/` (manifest, `.aeo/`,
+  `assets/aeo-cms.css`, and the optional `assets/answercloud-chat.css` only) + write `site.zip`,
+  ready for `start_deploy` → upload → `finalize_deploy`. This is the `byo_cms` artifact shape;
+  update the template's package script to copy the chat asset when present. For a `hosting` site,
+  ship all of `dist/` plus `.aeo/` and `aeo-cms.json` per SKILL.md's packaging rules instead.
 
 ## Verify before handing off (browser tools, not the user)
 
@@ -92,4 +102,7 @@ Keep this contract when editing the layouts; it is why one component serves both
 4. `npm run build` — each `.aeo/cms/{key}/show.html` starts with the banner, contains literal
    `<!-- aeo:content -->` (not `&lt;!--`), links `/assets/aeo-cms.css` (no `/_astro/` hrefs),
    and `dist/` has no `cms-preview/`, `cms-templates/`, or root `index.html`.
-5. `npm run package` — `site.zip` contains only `aeo-cms.json`, `.aeo/**`, `assets/aeo-cms.css`.
+5. When chat is themed, confirm `dist/assets/answercloud-chat.css` exists and contains no
+   unscoped selectors.
+6. `npm run package` — `site.zip` contains only `aeo-cms.json`, `.aeo/**`,
+   `assets/aeo-cms.css`, and the optional `assets/answercloud-chat.css`.

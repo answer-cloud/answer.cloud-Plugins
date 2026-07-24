@@ -7,7 +7,7 @@ companion subdomain) through the answercloud MCP server.
 Each plugin bundles:
 
 - the **answer-cloud-site** skill (Astro authoring rules, CMS template wizard, deploy loop,
-  chat/search widget verification)
+  AI-generated brand-matched chat styles, and chat/search widget verification)
 - the **answercloud MCP server** config (`https://answer.cloud/mcp` — sites, deploys, CMS tools)
 
 ## 1. Get an API key

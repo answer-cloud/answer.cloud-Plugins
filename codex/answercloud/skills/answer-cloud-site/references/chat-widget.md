@@ -17,6 +17,135 @@ The widget and its API are platform-owned; site authors supply answerable static
 Do not add `https://app.answer.cloud/embed.js` to Astro source. The platform injects it before
 `</body>` during publishing.
 
+## Brand-matched styling workflow
+
+For a site build or visual restyle, create a chat theme by default unless the user explicitly
+requests the stock theme or disables chat.
+
+1. Read the site's global style sources and inspect representative rendered components. Extract
+   the fonts, surfaces, text colors, accent and on-accent colors, border, focus ring, radii,
+   shadow, and motion character actually in use. Do not invent a second brand system.
+2. Write the theme to `public/assets/answercloud-chat.css`. Astro must emit it unchanged at
+   `dist/assets/answercloud-chat.css`.
+3. Scope every selector under `#llmo-chat-button`, `#llmo-chat-iframe`, or
+   `#llmo-chat-widget`. The same URL loads into the customer's page and the iframe, so unscoped
+   rules such as `:root`, `html`, `body`, `*`, `button`, `a`, or generic utility classes can
+   damage the host site.
+4. Exercise all meaningful states: launcher default/hover/focus, desktop/mobile frame, empty
+   chat, user and AI messages, long Markdown, links and references, composer focus, send/close/
+   clear controls, loader, errors, and reduced motion.
+5. Build first and verify the asset exists. For a `byo_cms` artifact, update the package script
+   so `assets/answercloud-chat.css` ships next to `assets/aeo-cms.css`.
+6. Only after an explicitly requested deploy is live, configure the canonical HTTPS URL with
+   `configure_widget`. Never point live configuration at localhost, a preview server, or a path
+   that has not deployed yet.
+
+The supported stable hooks are:
+
+- Host page: `#llmo-chat-button`, `.llmo-chat-button-icon`,
+  `.llmo-chat-button-input`, and `#llmo-chat-iframe`.
+- Chat iframe: `#llmo-chat-widget`, `.llmo-chat-popup`, `.llmo-messages`,
+  `.llmo-message.llmo-user`, `.llmo-message.llmo-ai`, `.llmo-markdown`,
+  `.llmo-message-references`, `.composer-wrap`, `.composer`, `.chat_textarea`,
+  `.chat_send`, `.llmo-close`, `.llmo-clear-chat`, `.llmo-loader`, and `.ai-icon`.
+- Theme variables on `#llmo-chat-widget`: `--bg`, `--ink`, `--ink-mid`, `--muted`,
+  `--panel`, `--ring`, `--ring-soft`, `--brand`, `--accent`, `--accent-deep`,
+  `--accent-soft`, `--accent-tint`, `--accent-tint-2`, `--accent-line`, `--radius`,
+  `--ease-brand`, `--font-sans`, and `--font-mono`.
+
+Start from the site's tokens, not these example values:
+
+```css
+/* Loaded in both documents: keep every selector widget-scoped. */
+#llmo-chat-button {
+  font-family: "Site Sans", system-ui, sans-serif;
+}
+
+#llmo-chat-button .llmo-chat-button-input {
+  color: #17324d;
+  background: #fffaf2;
+  border-color: #d8c9b3;
+  border-radius: 999px;
+  box-shadow: 0 12px 32px rgb(23 50 77 / 14%);
+}
+
+#llmo-chat-button:focus-within .llmo-chat-button-input {
+  outline: 3px solid rgb(197 77 45 / 28%);
+  outline-offset: 3px;
+}
+
+#llmo-chat-iframe {
+  border-radius: 24px !important;
+  box-shadow: 0 24px 70px rgb(23 50 77 / 20%) !important;
+}
+
+#llmo-chat-widget {
+  --bg: #fffaf2;
+  --ink: #17324d;
+  --ink-mid: #40566c;
+  --muted: #6c7a86;
+  --panel: #f4eadb;
+  --ring: #ded0bd;
+  --ring-soft: #eadfce;
+  --brand: #17324d;
+  --accent: #c54d2d;
+  --accent-deep: #a33d23;
+  --accent-tint: #fff0e9;
+  --accent-line: #efc5b6;
+  --radius: 18px;
+  --font-sans: "Site Sans", system-ui, sans-serif;
+}
+
+#llmo-chat-widget .composer,
+#llmo-chat-widget .llmo-message.llmo-user {
+  border-radius: 18px;
+}
+
+#llmo-chat-widget .chat_textarea:focus-visible,
+#llmo-chat-widget .chat_send:focus-visible,
+#llmo-chat-widget .llmo-close:focus-visible,
+#llmo-chat-widget .llmo-clear-chat:focus-visible {
+  outline: 3px solid rgb(197 77 45 / 28%);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #llmo-chat-button,
+  #llmo-chat-iframe,
+  #llmo-chat-widget .llmo-chat-popup,
+  #llmo-chat-widget .llmo-loader {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+```
+
+Configure after the stylesheet is live:
+
+```json
+{
+  "site_slug": "example",
+  "enabled": true,
+  "config": {
+    "css_path": "https://example.answer.cloud/assets/answercloud-chat.css",
+    "chat": {
+      "button_text": "Ask Example",
+      "intro_text": "What can we help you find?",
+      "button_text_color": "#17324d"
+    }
+  }
+}
+```
+
+`config` replaces the stored widget configuration when supplied; `{}` resets custom settings.
+Omit `config` to toggle `enabled` without losing an existing theme. Text must be concise and
+site-specific. `button_text_color` must be a readable hex color.
+
+After configuration, inspect the canonical live page at desktop and mobile widths. Confirm the
+CSS URL returns successfully, `list_sites` shows it under `widget.config.css_path`, the launcher
+is styled in the parent page, the panel is styled inside the iframe, focus is visible, text meets
+contrast expectations, content does not clip, and the host page outside the widget is unchanged.
+
 ## Identify the request path
 
 The widget iframe URL contains the platform organization and site identifiers. Treat session
@@ -36,6 +165,9 @@ keys, cookies, personal information, or copied chat history.
 | Observation | Likely layer | Next action |
 | --- | --- | --- |
 | No widget launcher on a live page | Platform injection or stale deploy | Confirm the current deploy, valid HTML with `</body>`, and live hostname. Do not add the script manually. |
+| Theme is absent everywhere | Missing/bad `css_path` or asset | Confirm `list_sites`, fetch the absolute CSS URL, and verify the file shipped in the live deploy. |
+| Iframe is themed but launcher is not | Stale `embed.js` or unscoped selector mismatch | Confirm the current embed loads the theme in the parent page and that launcher selectors start with `#llmo-chat-button` or `#llmo-chat-iframe`. |
+| Host website changes after theming | Leaking custom CSS | Remove unscoped selectors; every rule must begin with a supported widget ID. |
 | `get_pages` fails | Ingestion, embeddings, or retrieval | Inspect deploy warnings, page ingestion, and whether published pages have embeddings. |
 | `get_pages` succeeds with relevant titles, but `/api/messages` returns 500 | Chat-generation backend | Capture the request ID and response type; investigate the platform application. A site redeploy is not a fix. |
 | `/api/messages` succeeds, but the widget shows a generic error | Widget parsing or rendering | Inspect the response shape and browser error. Confirm the endpoint returned JSON. |
@@ -86,4 +218,6 @@ Do not call chat fixed until all of these are true:
 - The live widget renders the answer.
 - References use the canonical live hostname.
 - No chat request returns 4xx/5xx.
+- The launcher and iframe match the site's visual system at desktop and mobile widths.
+- The custom stylesheet causes no style changes outside the widget.
 - The evidence comes from the live site, not only a local unit test.

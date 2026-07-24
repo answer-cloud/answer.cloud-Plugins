@@ -1,7 +1,7 @@
 {
   "name": "answercloud",
-  "version": "1.0.0+codex.20260722224849",
-  "description": "Author and deploy AEO-friendly static sites to answer.cloud: the answer-cloud-site skill plus the answercloud MCP server (hosting deploys + CMS). Set ANSWERCLOUD_API_KEY to your aeo_host_ key.",
+  "version": "1.0.0+codex.20260724173446",
+  "description": "Author and deploy AEO-friendly static sites with brand-matched AI chat to answer.cloud: the answer-cloud-site skill plus the answercloud MCP server (hosting deploys + CMS). Set ANSWERCLOUD_API_KEY to your aeo_host_ key.",
   "author": {
     "name": "answer.cloud",
     "email": "jared@edgarallan.com",
@@ -23,8 +23,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Answer Cloud",
-    "shortDescription": "Author, CMS-configure, and deploy static sites to answer.cloud",
-    "longDescription": "Build AEO-friendly static sites with Astro, define editable CMS collection templates, and deploy to {slug}.answer.cloud or an ai. companion subdomain through the answercloud MCP workflow. answer.cloud generates the answer-engine layer (llms.txt, sitemaps, JSON-LD, text mirrors, chat widget) at deploy time.",
+    "shortDescription": "Build AEO sites with brand-matched AI chat",
+    "longDescription": "Build AEO-friendly static sites with Astro, define editable CMS collection templates, derive chat styles from each site's design system, and deploy to {slug}.answer.cloud or an ai. companion subdomain through the answercloud MCP workflow. answer.cloud generates the answer-engine layer (llms.txt, sitemaps, JSON-LD, text mirrors, chat widget) at deploy time.",
     "developerName": "answer.cloud",
     "category": "Developer Tools",
     "capabilities": [
@@ -36,7 +36,8 @@
     "defaultPrompt": [
       "Build and deploy an AEO-friendly static site to answer.cloud",
       "Set up editable CMS collection templates for my site",
-      "Create an AI companion site for my existing website"
+      "Create an AI companion site for my existing website",
+      "Make my answer.cloud chat experience match the rest of my website"
     ],
     "brandColor": "#111111",
     "composerIcon": "./assets/icon.png",

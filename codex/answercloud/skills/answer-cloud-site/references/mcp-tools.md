@@ -13,7 +13,8 @@ return `deploys_remaining_today`.
 ## list_sites
 
 - Params: none
-- Returns: `sites[]` with slug, name, url, status, page usage, and current deploy info
+- Returns: `sites[]` with slug, name, `kind`, url, status, page usage, current deploy info, and
+  `widget: { enabled, config }`
 
 ## create_site
 
@@ -68,6 +69,27 @@ Warnings to act on:
 - Params: `site_slug`, `to_sequence`
 - Returns: the new current deploy and live URL
 - Notes: Roll back only to a deploy that previously went live.
+
+## configure_widget
+
+- Params: `site_slug`, `enabled`; optional
+  `config: { css_path, chat: { button_text, intro_text, button_text_color } }`
+- Returns: `{ site_slug, enabled, config, pages_refreshed }`
+- Notes:
+  - `css_path` must be the absolute HTTPS URL of a stylesheet that already exists on the live
+    site. For generated themes use
+    `https://{canonical-host}/assets/answercloud-chat.css`.
+  - The stylesheet loads into both the host document and chat iframe. Scope every selector beneath
+    `#llmo-chat-button`, `#llmo-chat-iframe`, or `#llmo-chat-widget`.
+  - Supplying `config` replaces the stored config; pass `{}` to reset custom styling. Omitting it
+    toggles `enabled` without replacing the current config.
+  - When a current deploy exists, the tool refreshes the injected settings in its live HTML,
+    mirrors companion-site pages, and invalidates affected paths. A refresh failure returns
+    `widget_refresh_failed`; the settings remain saved and a redeploy applies them.
+  - `button_text_color` accepts hex colors only. Invalid URLs, values, or unknown settings return
+    `widget_invalid_config`.
+  - This changes live widget state. Call it only when the user asked to customize chat or asked to
+    deploy a site whose brand-matched chat theme is part of the build.
 
 ## CMS tools
 
@@ -137,9 +159,9 @@ concrete next step.
 ## Optional site-ops tools
 
 Some environments also expose tools such as `set_custom_domain`, `check_domain`,
-`get_analytics`, `search_site`, or `configure_widget`. Use them for verification and site
+`get_analytics`, or `search_site`. Use them for verification and site
 operations when available, but do not block the core build-and-deploy loop on them.
 
 ## Core loop
 
-list_sites -> create_site -> build locally -> start_deploy -> run upload command -> finalize_deploy -> poll get_deploy to live -> fix warnings -> redeploy until clean
+list_sites -> create_site -> build locally -> start_deploy -> run upload command -> finalize_deploy -> poll get_deploy to live -> configure_widget -> verify chat -> fix warnings/style defects -> redeploy until clean

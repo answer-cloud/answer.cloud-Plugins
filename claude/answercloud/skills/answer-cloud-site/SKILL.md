@@ -2,8 +2,8 @@
 name: answer-cloud-site
 description: >-
   Scaffold, author, build, and deploy an Astro site to answer.cloud with AEO-friendly HTML, editable CMS
-  collection templates, the answercloud MCP workflow, and verification of the generated chat/search
-  widget. Use when the user wants to build,
+  collection templates, brand-matched generated chat styles, the answercloud MCP workflow, and
+  verification of the generated chat/search widget. Use when the user wants to build,
   scaffold, or deploy a site for answer.cloud or answercloud, ship a site to {slug}.answer.cloud,
   make a site answer-engine optimized / AEO / LLM-friendly, create a CMS template wizard
   setup for an existing site, build an AI companion site on the ai. subdomain, deploy
@@ -83,10 +83,11 @@ Two hard rules for these deploys:
    confirm the `{org.slug}-cms` site is present; deploy to that slug. If it is missing, the org
    likely does not have BYO CMS enabled / a custom domain set — tell the user; do not create a
    `hosting` site as a substitute.
-2. **Ship only files generated from the org's CMS collections.** The deploy pipeline serves
-   *every* static file in the artifact, and on a path collision the static file wins and the CMS
-   render is skipped (with a `cms_path_collision` warning). So do **not** ship Astro's built
-   public pages. Use Astro purely as the local generator for the CMS templates.
+2. **Ship only files generated from the org's CMS collections, plus the dedicated chat theme
+   asset.** The deploy pipeline serves *every* static file in the artifact, and on a path collision
+   the static file wins and the CMS render is skipped (with a `cms_path_collision` warning). So do
+   **not** ship Astro's built public pages. Use Astro purely as the local generator for the CMS
+   templates and `/assets/answercloud-chat.css`.
 
 **Enumerate the org's existing collections first — never invent, infer from the user's words,
 or create new ones for a companion site.** The set of collections is whatever already exists in
@@ -105,7 +106,8 @@ the organization; the AI's job is to mirror it, not extend it.
    for `byo_cms` sites the publisher writes the AI chat page at `/` automatically, and any
    collection whose `index_path` is `/` is rendered from CMS.
 
-Package **only** the CMS pieces. The official template repo does this with one command:
+Package **only** the CMS pieces and chat theme. After adapting the official template's package
+script to copy the theme asset, it does this with one command:
 
 ```sh
 npm run package    # build + assemble .deploy/ + write site.zip
@@ -118,7 +120,8 @@ npm run build                                 # .aeo/cms/**, aeo-cms.json, dist/
 rm -rf .deploy && mkdir -p .deploy/assets
 cp aeo-cms.json .deploy/                       # manifest at artifact root
 cp -R .aeo       .deploy/.aeo                  # private templates → stashed, never served
-cp dist/assets/aeo-cms.css .deploy/assets/     # only assets the templates reference
+cp dist/assets/aeo-cms.css .deploy/assets/     # CMS template stylesheet
+test ! -f dist/assets/answercloud-chat.css || cp dist/assets/answercloud-chat.css .deploy/assets/
 (cd .deploy && zip -r /tmp/site.zip .)
 ```
 
@@ -182,6 +185,8 @@ A site-generation task is complete only when all of these are true:
 - `npm run build` succeeds and produces `dist/**/*.html` from the `.astro` source.
 - Hand-written `.html` is limited to generated build output and the generated `.aeo/cms/**`
   templates required by answer.cloud. It is never the site's primary editable source.
+- `public/assets/answercloud-chat.css` exists and is derived from the site's real design system
+  unless the user explicitly asks to keep the default widget theme or disable chat.
 - `CLAUDE.md` and `AGENTS.md` context markers exist at the project root (see "Write the
   project context marker" below).
 
@@ -248,6 +253,39 @@ answer.cloud injects the first-party chat/search widget at serve time. Do not ad
 widget markup, create a local chat endpoint, or add an AI SDK to the Astro project to make the
 widget appear. Local Astro previews do not prove whether the production widget was injected.
 
+### Make the generated chat look native to the site
+
+Brand-matching the chat is part of every site build or visual restyle unless the user explicitly
+asks to keep answer.cloud's default theme or disables chat. Do not ask the user to choose colors
+that already exist in the codebase.
+
+1. Inspect the actual site-wide layout and style sources before designing the chat: global CSS,
+   font declarations, design tokens/custom properties, buttons, inputs, cards, borders, shadows,
+   radii, and light/dark behavior. For an existing website, treat its current rendered design and
+   source tokens as authoritative.
+2. Distill those findings into a small chat style brief: display/body fonts, page/panel surfaces,
+   primary and muted text, accent + on-accent colors, border, focus treatment, small/large radii,
+   shadow, and the site's visual tone.
+3. Author `public/assets/answercloud-chat.css` from that brief. This one stylesheet is loaded into
+   both the host page (for `#llmo-chat-button` and `#llmo-chat-iframe`) and the chat iframe (for
+   `#llmo-chat-widget`). Scope every rule beneath one of those three IDs. Never use unscoped
+   `:root`, `html`, `body`, `*`, element, or generic utility-class selectors: the host-page copy
+   must not restyle the website.
+4. Match the site without cloning it blindly. Preserve readable contrast, visible keyboard focus,
+   mobile usability, reduced-motion preferences, and answer.cloud attribution. Style the launcher,
+   panel, composer, send/close/clear controls, user messages, answer typography, links, references,
+   loading states, and responsive frame.
+5. Keep the stylesheet at the stable public path `/assets/answercloud-chat.css`. Astro copies
+   `public/**` into `dist/`; verify the built asset exists. For an AI companion package, include
+   this asset alongside `assets/aeo-cms.css`.
+6. Do not call `configure_widget` during local-only work. Once the user has explicitly asked to
+   deploy and the deploy is live, call it with the canonical HTTPS asset URL plus site-specific
+   `button_text`, `intro_text`, and accessible `button_text_color`. The operation changes live
+   widget state; the CSS URL must already return successfully.
+
+Read [references/chat-widget.md](references/chat-widget.md) completely for the selector contract,
+configuration shape, accessibility rules, and live style verification.
+
 When the user asks to add, verify, or debug the widget:
 
 1. Inspect the live answer.cloud URL and the current live deploy before changing local source.
@@ -261,8 +299,8 @@ When the user asks to add, verify, or debug the widget:
 6. Treat a platform API 500 as a platform/backend defect. Do not redeploy unchanged Astro output
    or claim the site content caused it without evidence.
 
-Read [references/chat-widget.md](references/chat-widget.md) completely for the live verification
-and troubleshooting procedure whenever chat behavior is in scope.
+Read the same reference completely for the live verification and troubleshooting procedure
+whenever chat behavior is in scope.
 
 ## Run the CMS template wizard for editable content
 
@@ -378,6 +416,11 @@ stable public asset:
 The relocate script writes that file to `dist/assets/aeo-cms.css`; ship it with the artifact
 (the `byo_cms` packaging copies it explicitly; `hosting` deploys ship all of `dist/`). Inline
 CSS only when the user explicitly asks for a fully self-contained template.
+
+The generated chat theme is deliberately separate: keep it at
+`public/assets/answercloud-chat.css`, which Astro copies unchanged to
+`dist/assets/answercloud-chat.css`. Do not import it into `CmsShell.astro`; answer.cloud loads it
+into the host page and chat iframe through the configured absolute URL.
 
 ### Packaging rules (important)
 
@@ -531,7 +574,8 @@ Before finishing, verify:
 - `dist/` contains no `cms-preview/`, `cms-templates/`, or hub `index.html` after build.
 - The README's "Which file do I edit?" table matches the actual project layout.
 - The build succeeds, and `npm run package` produces an artifact containing only
-  `aeo-cms.json`, `.aeo/**`, and `assets/aeo-cms.css` for `byo_cms` sites.
+  `aeo-cms.json`, `.aeo/**`, `assets/aeo-cms.css`, and, when chat is themed,
+  `assets/answercloud-chat.css` for `byo_cms` sites.
 
 ## Run the deploy loop through answercloud MCP
 
@@ -554,7 +598,10 @@ Use this core loop:
 5. Run the returned upload command after fixing the build directory path.
 6. Run `finalize_deploy` with the `deploy_id`.
 7. Poll `get_deploy` until the status reaches `live`.
-8. Read `warnings`, fix the site, and redeploy until the warnings are clean.
+8. Unless the user opted out of chat theming, call `configure_widget` with the live
+   `/assets/answercloud-chat.css` URL and the brand-appropriate chat copy, then verify the
+   launcher and iframe at the canonical live URL.
+9. Read `warnings`, fix the site, and redeploy until the warnings are clean.
 
 Use `deploy_files` only for very small changesets of 500 KB or less. For full sites, use
 `start_deploy` so the artifact uploads directly to storage instead of flowing through model
@@ -636,6 +683,9 @@ After a deploy goes live, verify the public site and the answer-engine layer:
 5. Confirm the chat launcher is present. If the user asked to verify chat or reported it broken,
    run one short, non-sensitive question grounded in the deployed content and follow
    [references/chat-widget.md](references/chat-widget.md).
+6. When chat is themed, confirm `/assets/answercloud-chat.css` returns CSS, `list_sites` reports
+   it as the widget's `config.css_path`, and both launcher and iframe visibly match the site's
+   design at desktop and mobile widths.
 
 If the MCP server exposes post-deploy helpers such as analytics or search tools, use them
 to confirm the site is discoverable and answerable.
@@ -650,8 +700,9 @@ to confirm the site is discoverable and answerable.
 
 ## Use this end-to-end recipe
 
-1. Scaffold an Astro source project, write the `CLAUDE.md`/`AGENTS.md` context marker, and
-   pass the Astro source-project completion gate.
+1. Scaffold an Astro source project, write the `CLAUDE.md`/`AGENTS.md` context marker, derive the
+   chat theme from the site's real design tokens, and pass the Astro source-project completion
+   gate.
 2. Author semantic, question-oriented pages; for editable content run the CMS template
    wizard, generate `aeo-cms.json` and `.aeo/cms/{key}/show.html` + `index.html`, and keep
    the shared CMS CSS in the public build.
@@ -659,8 +710,9 @@ to confirm the site is discoverable and answerable.
 4. Stop here and report the local result. Continue only if the user has explicitly asked to
    deploy.
 5. Create the site if needed, then run `start_deploy`, upload, and `finalize_deploy`.
-6. Poll `get_deploy` to `live`.
-7. Fix warnings and redeploy until clean (fixing warnings on a deploy the user just requested
+6. Poll `get_deploy` to `live`; unless the user opted out, configure the widget with the deployed
+   brand-matched stylesheet and verify both launcher and iframe on the canonical URL.
+7. Fix warnings or chat-style defects and redeploy until clean (fixing warnings on a deploy the user just requested
    does not need re-approval).
 8. Update the context marker with the final slug, served hostname, and organization.
 9. Report the live `https://{slug}.answer.cloud` URL and note that the answer-engine layer is

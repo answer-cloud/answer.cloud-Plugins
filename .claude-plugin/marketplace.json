@@ -10,7 +10,7 @@
       "name": "answercloud",
       "displayName": "Answer Cloud",
       "source": "./claude/answercloud",
-      "description": "Author and deploy AEO-friendly static sites to answer.cloud: the answer-cloud-site skill plus the answercloud MCP server (hosting deploys + CMS).",
+      "description": "Author and deploy AEO-friendly static sites with brand-matched AI chat to answer.cloud: the answer-cloud-site skill plus the answercloud MCP server (hosting deploys + CMS).",
       "version": "1.0.0",
       "author": { "name": "answer.cloud" },
       "homepage": "https://answer.cloud",
