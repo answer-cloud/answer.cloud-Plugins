@@ -2,18 +2,20 @@
 
 Official plugins for [answer.cloud](https://answer.cloud) — author AEO-friendly static sites,
 define editable CMS collection templates, and deploy to `{slug}.answer.cloud` (or an `ai.`
-companion subdomain) through the answercloud MCP server.
+companion subdomain) from Codex or Claude Code.
 
-Each plugin bundles:
+The plugin is the complete setup. It includes:
 
-- the **answer-cloud-site** skill (Astro authoring rules, CMS template wizard, deploy loop,
-  AI-generated brand-matched chat styles, and chat/search widget verification)
-- the **answercloud MCP server** config (`https://answer.cloud/mcp` — sites, deploys, CMS tools)
+- the answer.cloud build and content workflow
+- site, deploy, domain, CMS, and GitHub tools
+- AI-generated brand-matched chat styles and chat/search widget verification
+
+You do not need to configure a server or download a separate skill.
 
 ## 1. Get an API key
 
 Create a hosting API key in the [answer.cloud dashboard](https://answer.cloud) under
-**Settings → API & MCP** (keys start with `aeo_host_`), then export it:
+**Plugin & API keys** (keys start with `aeo_host_`), then export it:
 
 ```sh
 export ANSWERCLOUD_API_KEY=aeo_host_YOUR_KEY
@@ -30,8 +32,8 @@ Add that line to your shell profile so new sessions pick it up.
 /plugin install answercloud@answercloud
 ```
 
-The skill is invoked as `/answercloud:answer-cloud-site` (or automatically when you ask to build
-or deploy an answer.cloud site), and the `answercloud` MCP tools connect using `ANSWERCLOUD_API_KEY`.
+Start a new Claude Code session after installation, then ask the Answer Cloud plugin to build,
+deploy, or manage your site.
 
 ### Codex
 
@@ -40,28 +42,8 @@ codex plugin marketplace add jfals82/answer.cloud-Plugins
 codex plugin add answercloud@answercloud
 ```
 
-The `answer-cloud-site` skill appears under `/skills` (invoke with `$answer-cloud-site`), and the
-`answercloud` MCP server authenticates via `ANSWERCLOUD_API_KEY`.
-
-## Manual setup (no plugin)
-
-- Claude Code:
-
-  ```sh
-  claude mcp add --transport http answercloud https://answer.cloud/mcp \
-    --header "Authorization: Bearer aeo_host_YOUR_KEY"
-  ```
-
-- Codex — add to `~/.codex/config.toml`:
-
-  ```toml
-  [mcp_servers.answercloud]
-  url = "https://answer.cloud/mcp"
-  bearer_token_env_var = "ANSWERCLOUD_API_KEY"
-  ```
-
-Then copy `claude/answercloud/skills/answer-cloud-site/` into `~/.claude/skills/` (Claude Code) or
-`codex/answercloud/skills/answer-cloud-site/` into `~/.agents/skills/` (Codex).
+Start a new Codex session after installation, then ask the Answer Cloud plugin to build, deploy,
+or manage your site.
 
 ## Layout
 
