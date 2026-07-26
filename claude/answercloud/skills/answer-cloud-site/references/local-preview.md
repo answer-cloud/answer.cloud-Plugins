@@ -71,9 +71,12 @@ Keep this contract when editing the layouts; it is why one component serves both
 2. `src/cms/collections.mjs` — replace `blog` with the real collections. For a `byo_cms`
    companion site, mirror `list_cms_collections` exactly (keys, `path_pattern`, `index_path`,
    fields); never invent collections.
-3. `src/styles/cms.css` — restyle to the user's brand. Keep coverage of everything the
-   kitchen-sink sample exercises: `.cms-content` typography (h2–h4, lists, links, `pre>code`,
-   blockquote, tables, images), `ul.entries li`, `.summary`, `.empty`, `.aeo-related`.
+3. `src/styles/cms.css` — restyle to the user's brand. When no existing site or explicit brand
+   source exists, use the official
+   [answer.cloud style defaults](style-defaults.md) without asking the user to choose a visual
+   direction. Keep coverage of everything the kitchen-sink sample exercises: `.cms-content`
+   typography (h2–h4, lists, links, `pre>code`, blockquote, tables, images),
+   `ul.entries li`, `.summary`, `.empty`, `.aeo-related`.
 4. `src/cms/sample-entries.mjs` — make samples read like the real site; keep the first entry a
    kitchen-sink (headings, lists, code, blockquote, table, image) and keep one entry without a
    summary. Update `src/styles/preview.css` only if the hub chrome needs it — it never ships.

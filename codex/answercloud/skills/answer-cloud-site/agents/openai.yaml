@@ -1,7 +1,7 @@
 interface:
   display_name: "Answer Cloud Site"
-  short_description: "Build answer.cloud sites with brand-matched AI chat"
-  default_prompt: "Use $answer-cloud-site to build, deploy, or troubleshoot an Astro site and make its generated answer.cloud chat/search widget match the site's design."
+  short_description: "Build answer.cloud sites with official style defaults"
+  default_prompt: "Use $answer-cloud-site to build, deploy, or troubleshoot an Astro site, apply the official answer.cloud style guide when no brand system is supplied, and match the generated chat/search widget to the active design."
 dependencies:
   tools:
     - type: "mcp"

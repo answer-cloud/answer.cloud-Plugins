@@ -20,7 +20,8 @@ Do not add `https://app.answer.cloud/embed.js` to Astro source. The platform inj
 ## Brand-matched styling workflow
 
 For a site build or visual restyle, create a chat theme by default unless the user explicitly
-requests the stock theme or disables chat.
+requests the stock theme or disables chat. For a new unbranded site, begin with the official
+answer.cloud style template's `public/assets/answercloud-chat.css`.
 
 1. Read the site's global style sources and inspect representative rendered components. Extract
    the fonts, surfaces, text colors, accent and on-accent colors, border, focus ring, radii,

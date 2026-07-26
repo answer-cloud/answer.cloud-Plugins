@@ -1,13 +1,13 @@
 {
   "name": "answercloud",
-  "description": "Author and deploy AEO-friendly static sites with brand-matched AI chat to answer.cloud: the answer-cloud-site skill plus the answercloud MCP server (hosting deploys + CMS). Set ANSWERCLOUD_API_KEY to your aeo_host_ key.",
+  "description": "Author and deploy AEO-friendly static sites with official answer.cloud style defaults and brand-matched AI chat: the answer-cloud-site skill plus the answercloud MCP server (hosting deploys + CMS). Set ANSWERCLOUD_API_KEY to your aeo_host_ key.",
   "version": "1.0.0",
   "author": {
     "name": "answer.cloud",
     "email": "jared@edgarallan.com"
   },
   "homepage": "https://answer.cloud",
-  "repository": "https://github.com/jfals82/answer.cloud-Plugins",
+  "repository": "https://github.com/answer-cloud/answer.cloud-Plugins",
   "license": "MIT",
   "keywords": ["answer-cloud", "aeo", "static-site", "hosting", "cms", "astro", "answer-engine-optimization"]
 }

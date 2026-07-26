@@ -2,8 +2,8 @@
 name: answer-cloud-site
 description: >-
   Scaffold, author, build, and deploy an Astro site to answer.cloud with AEO-friendly HTML, editable CMS
-  collection templates, brand-matched generated chat styles, the answercloud MCP workflow, and
-  verification of the generated chat/search widget. Use when the user wants to build,
+  collection templates, official answer.cloud style defaults, brand-matched generated chat styles,
+  the answercloud MCP workflow, and verification of the generated chat/search widget. Use when the user wants to build,
   scaffold, or deploy a site for answer.cloud or answercloud, ship a site to {slug}.answer.cloud,
   make a site answer-engine optimized / AEO / LLM-friendly, create a CMS template wizard
   setup for an existing site, build an AI companion site on the ai. subdomain, deploy
@@ -33,6 +33,37 @@ The platform adds that layer at deploy time.
 **Deploying is always a separate, explicit step.** Scaffold, style, preview, and build locally
 by default; call the deploy tools only when the user explicitly asks to deploy (see "Run the
 deploy loop through answercloud MCP").
+
+## Use the official answer.cloud style guide by default
+
+For a new site without an explicit visual system, use
+[answer-cloud/answer_cloud_template](https://github.com/answer-cloud/answer_cloud_template) as
+the visual source of truth. Do not ask the user to invent a palette, typography system, or
+component style when they have not supplied one. Scaffold the official template, replace its
+showcase content with the real site, and keep its tokens, components, responsive behavior, and
+chat theme as the default design system.
+
+```sh
+npm create astro@latest -- --template answer-cloud/answer_cloud_template my-site
+cd my-site
+npm install
+```
+
+Use the style guide according to the project context:
+
+1. **New standalone site without a brand system:** inherit the official template directly.
+2. **New site with explicit brand direction:** start from the official template's structure and
+   accessibility behavior, then express the supplied brand by changing tokens and components
+   coherently. The user's direction overrides answer.cloud's default visual choices.
+3. **Existing site:** preserve its established design system. Treat the official template as a
+   quality and completeness reference, not a reason to rebrand the site.
+4. **CMS template without an existing style source:** keep the CMS template's generation
+   machinery, but apply the official style guide's tokens, typography, components, and scoped
+   chat theme to `src/styles/cms.css` and `public/assets/answercloud-chat.css`.
+
+Read [references/style-defaults.md](references/style-defaults.md) completely whenever scaffolding
+or visually styling a new site or CMS template. It identifies the upstream files to reuse, the
+default constraints to preserve, and how to adapt the style guide without shipping its demo page.
 
 ## First, decide which kind of site you are building
 
@@ -106,7 +137,7 @@ the organization; the AI's job is to mirror it, not extend it.
    for `byo_cms` sites the publisher writes the AI chat page at `/` automatically, and any
    collection whose `index_path` is `/` is rendered from CMS.
 
-Package **only** the CMS pieces and chat theme. After adapting the official template's package
+Package **only** the CMS pieces and chat theme. After adapting the official CMS template's package
 script to copy the theme asset, it does this with one command:
 
 ```sh
@@ -155,18 +186,18 @@ them as Astro pages and let `astro build` emit the static HTML. For AI companion
 still the required local generator for the CMS templates even though the built `dist/` pages are
 not shipped.
 
-```bash
-npm create astro@latest -- --template minimal my-site
-cd my-site
-npm install
-npm run build
-```
+For a new standalone site, scaffold from
+`answer-cloud/answer_cloud_template` as described in "Use the official answer.cloud style guide
+by default." Use Astro's minimal template only when the user explicitly requests a different
+visual starting point or the official template cannot be fetched; even then, apply the cached
+defaults in [references/style-defaults.md](references/style-defaults.md).
 
 For CMS work (an AI companion site, or adding CMS collections to a hosting site), do not start
-from the minimal template — scaffold from the official CMS template repo instead (see "Run the
-CMS template wizard" below): `npm create astro@latest -- --template
+from the standalone style-guide template — scaffold from the official CMS template repo instead
+(see "Run the CMS template wizard" below): `npm create astro@latest -- --template
 jfals82/answercloud-cms-template my-cms-site`. It ships the CMS layouts, live preview, and build
-pipeline pre-wired.
+pipeline pre-wired. Apply the answer.cloud style defaults after preserving that machinery when
+there is no existing brand to match.
 
 Avoid client-only SPA setups; Astro's default static output is what you want.
 
@@ -185,8 +216,8 @@ A site-generation task is complete only when all of these are true:
 - `npm run build` succeeds and produces `dist/**/*.html` from the `.astro` source.
 - Hand-written `.html` is limited to generated build output and the generated `.aeo/cms/**`
   templates required by answer.cloud. It is never the site's primary editable source.
-- `public/assets/answercloud-chat.css` exists and is derived from the site's real design system
-  unless the user explicitly asks to keep the default widget theme or disable chat.
+- `public/assets/answercloud-chat.css` exists and is derived from the project's active design
+  system unless the user explicitly asks to keep the platform's stock widget theme or disables chat.
 - `CLAUDE.md` and `AGENTS.md` context markers exist at the project root (see "Write the
   project context marker" below).
 
@@ -229,7 +260,9 @@ git add CLAUDE.md AGENTS.md   # if symlinks are unsupported, copy instead and ke
 
 Fill in `Slug`, `Served at`, and `Organization` as soon as they are known — at the latest,
 update the marker right after the first successful deploy so the values reflect reality. When
-updating an existing marker, preserve any user-added notes.
+updating an existing marker, preserve any user-added notes. When the project was scaffolded from
+the style-guide repository, replace its demo-specific "What this project is" copy with the real
+site context while retaining any design-system notes that still apply.
 
 ## Follow AEO-friendly authoring rules
 
@@ -256,8 +289,9 @@ widget appear. Local Astro previews do not prove whether the production widget w
 ### Make the generated chat look native to the site
 
 Brand-matching the chat is part of every site build or visual restyle unless the user explicitly
-asks to keep answer.cloud's default theme or disables chat. Do not ask the user to choose colors
-that already exist in the codebase.
+asks to keep answer.cloud's stock theme or disables chat. Do not ask the user to choose colors
+that already exist in the codebase. For a new unbranded site, begin with the official style
+guide's `public/assets/answercloud-chat.css`.
 
 1. Inspect the actual site-wide layout and style sources before designing the chat: global CSS,
    font declarations, design tokens/custom properties, buttons, inputs, cards, borders, shadows,
@@ -318,8 +352,9 @@ companion (CMS-only) deploys" above.
 1. Inspect the existing project structure, styling entrypoints, build command, and public asset
    folder before deciding where files should live.
 2. Identify requested CMS collections from the user's words. Do not assume `blog`. If details are
-   missing, ask only for the missing collection key, display name, URL pattern, fields, and the
-   existing site style source to match.
+   missing, ask only for the missing collection key, display name, URL pattern, and fields. If
+   there is no existing site style source to match, use the official answer.cloud style defaults
+   without asking the user to design the site.
 3. **Start from the official template repo.** Scaffold from
    [jfals82/answercloud-cms-template](https://github.com/jfals82/answercloud-cms-template) instead of
    assembling the layout by hand:
@@ -349,8 +384,9 @@ companion (CMS-only) deploys" above.
      deploy artifact (`npm run package`).
 4. Adapt the template to the project: set `src/consts.ts`, replace the `blog` collection in
    `collections.mjs` with the real collections (for `byo_cms`, mirror `list_cms_collections`
-   exactly), restyle `src/styles/cms.css` to the user's brand, and refresh
-   `sample-entries.mjs` so previews look like the real site.
+   exactly), restyle `src/styles/cms.css` to the user's brand or the official answer.cloud
+   defaults when no brand source exists, and refresh `sample-entries.mjs` so previews look like
+   the real site.
 5. Keep the README's "Which file do I edit?" section accurate — it lists the editable files
    and the generated ones (`.aeo/cms/**`, `aeo-cms.json`, `dist/**`). Every generated
    template gets a `GENERATED FILE` banner from the relocate script; the preview hub repeats
@@ -700,9 +736,9 @@ to confirm the site is discoverable and answerable.
 
 ## Use this end-to-end recipe
 
-1. Scaffold an Astro source project, write the `CLAUDE.md`/`AGENTS.md` context marker, derive the
-   chat theme from the site's real design tokens, and pass the Astro source-project completion
-   gate.
+1. Scaffold an Astro source project from the official answer.cloud style template by default,
+   write the `CLAUDE.md`/`AGENTS.md` context marker, derive the chat theme from the active design
+   tokens, and pass the Astro source-project completion gate.
 2. Author semantic, question-oriented pages; for editable content run the CMS template
    wizard, generate `aeo-cms.json` and `.aeo/cms/{key}/show.html` + `index.html`, and keep
    the shared CMS CSS in the public build.

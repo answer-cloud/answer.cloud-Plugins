@@ -8,6 +8,7 @@ The plugin is the complete setup. It includes:
 
 - the answer.cloud build and content workflow
 - site, deploy, domain, CMS, and GitHub tools
+- official answer.cloud style-guide defaults for new unbranded sites and CMS templates
 - AI-generated brand-matched chat styles and chat/search widget verification
 
 You do not need to configure a server or download a separate skill.
@@ -28,7 +29,7 @@ Add that line to your shell profile so new sessions pick it up.
 ### Claude Code
 
 ```
-/plugin marketplace add jfals82/answer.cloud-Plugins
+/plugin marketplace add answer-cloud/answer.cloud-Plugins
 /plugin install answercloud@answercloud
 ```
 
@@ -38,7 +39,7 @@ deploy, or manage your site.
 ### Codex
 
 ```sh
-codex plugin marketplace add jfals82/answer.cloud-Plugins
+codex plugin marketplace add answer-cloud/answer.cloud-Plugins
 codex plugin add answercloud@answercloud
 ```
 
