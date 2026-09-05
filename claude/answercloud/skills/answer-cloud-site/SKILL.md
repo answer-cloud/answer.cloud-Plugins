@@ -680,33 +680,18 @@ and the first push that deploys is theirs to make.
 
 ## MCP connection and auth
 
-The answercloud MCP server lives at `https://answer.cloud/mcp` (Streamable HTTP, Bearer auth). If
-MCP auth fails, tell the user to create a hosting API key in the answer.cloud dashboard
-(Settings -> API & MCP). The key starts with `aeo_host_`.
+The answercloud MCP server lives at `https://answer.cloud/mcp` (Streamable HTTP, OAuth 2.1). The
+plugin bundles the server config. On first use, let the user complete the browser sign-in and
+choose the answer.cloud organization to connect; never ask them to paste an API key.
 
-If this skill came from the **answercloud plugin** (Claude Code or Codex), the server config is
-already bundled — the user only needs to export the key and restart the session:
+If automatic sign-in does not begin, tell the user to open their agent's MCP connection settings
+and reconnect `answercloud`. Preserve the server URL exactly, including `/mcp`, and do not add a
+static `Authorization` header because that disables OAuth discovery. Service keys are only for
+headless scripts where a browser sign-in is impossible.
 
-```sh
-export ANSWERCLOUD_API_KEY=aeo_host_YOUR_KEY
-```
-
-Manual setup without the plugin:
-
-- Claude Code:
-
-  ```sh
-  claude mcp add --transport http answercloud https://answer.cloud/mcp \
-    --header "Authorization: Bearer aeo_host_YOUR_KEY"
-  ```
-
-- Codex — add to `~/.codex/config.toml`:
-
-  ```toml
-  [mcp_servers.answercloud]
-  url = "https://answer.cloud/mcp"
-  bearer_token_env_var = "ANSWERCLOUD_API_KEY"
-  ```
+For manual setup without the plugin, add `https://answer.cloud/mcp` as a Streamable HTTP MCP
+server with OAuth and no custom headers. ChatGPT users can add the same URL as a custom app in
+developer mode.
 
 ## Verify the live result
 

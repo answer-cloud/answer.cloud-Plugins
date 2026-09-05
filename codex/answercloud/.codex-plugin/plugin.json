@@ -1,7 +1,7 @@
 {
   "name": "answercloud",
-  "version": "1.0.0+codex.20260725214828",
-  "description": "Author and deploy AEO-friendly static sites with official answer.cloud style defaults and brand-matched AI chat: the answer-cloud-site skill plus the answercloud MCP server (hosting deploys + CMS). Set ANSWERCLOUD_API_KEY to your aeo_host_ key.",
+  "version": "1.0.0+codex.20260904212550",
+  "description": "Author and deploy AEO-friendly static sites with official answer.cloud style defaults and brand-matched AI chat. Connect securely with your answer.cloud account\u2014no API key setup required.",
   "author": {
     "name": "answer.cloud",
     "email": "jared@edgarallan.com",

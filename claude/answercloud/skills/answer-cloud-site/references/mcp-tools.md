@@ -2,12 +2,12 @@
 
 Server: `https://answer.cloud/mcp`
 
-Auth: send `Authorization: Bearer aeo_host_...`
+Auth: OAuth 2.1. On first use, complete the browser sign-in and choose the answer.cloud organization to connect. Service-key Bearer auth remains available for headless automation.
 
 Treat tool errors as structured next steps. Common machine codes include `card_required`,
 `not_found`, `too_large`, and `rate_limited`. Read the human message before retrying.
 
-Rate limits: 60 requests/minute per key. Deploy tools also consume a daily deploy quota and
+Rate limits: 60 requests/minute per connection. Deploy tools also consume a daily deploy quota and
 return `deploys_remaining_today`.
 
 ## list_sites

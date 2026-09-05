@@ -2,7 +2,7 @@
 
 Official plugins for [answer.cloud](https://answer.cloud) — author AEO-friendly static sites,
 define editable CMS collection templates, and deploy to `{slug}.answer.cloud` (or an `ai.`
-companion subdomain) from Codex or Claude Code.
+companion subdomain) from Codex, Claude Code, or ChatGPT.
 
 The plugin is the complete setup. It includes:
 
@@ -13,18 +13,7 @@ The plugin is the complete setup. It includes:
 
 You do not need to configure a server or download a separate skill.
 
-## 1. Get an API key
-
-Create a hosting API key in the [answer.cloud dashboard](https://answer.cloud) under
-**Plugin & API keys** (keys start with `aeo_host_`), then export it:
-
-```sh
-export ANSWERCLOUD_API_KEY=aeo_host_YOUR_KEY
-```
-
-Add that line to your shell profile so new sessions pick it up.
-
-## 2. Install
+## 1. Install
 
 ### Claude Code
 
@@ -45,6 +34,17 @@ codex plugin add answercloud@answercloud
 
 Start a new Codex session after installation, then ask the Answer Cloud plugin to build, deploy,
 or manage your site.
+
+### ChatGPT
+
+In ChatGPT developer mode, create a custom app with the MCP endpoint
+`https://answer.cloud/mcp`, choose OAuth, and scan the tools.
+
+## 2. Connect your account
+
+The first Answer Cloud action opens a secure browser sign-in. Choose the organization the agent
+may access and approve the requested read and deploy permissions. There is no API key to copy or
+save. Short-lived access refreshes automatically until you disconnect the agent in Answer Cloud.
 
 ## Layout
 

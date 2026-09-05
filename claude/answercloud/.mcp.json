@@ -2,10 +2,7 @@
   "mcpServers": {
     "answercloud": {
       "type": "http",
-      "url": "https://answer.cloud/mcp",
-      "headers": {
-        "Authorization": "Bearer ${ANSWERCLOUD_API_KEY}"
-      }
+      "url": "https://answer.cloud/mcp"
     }
   }
 }
