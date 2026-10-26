@@ -1,28 +1,59 @@
 ---
 name: answer-cloud-site
 description: >-
-  Scaffold, author, build, and deploy an Astro site to answer.cloud with AEO-friendly HTML, editable CMS
-  collection templates, official answer.cloud style defaults, brand-matched generated chat styles,
-  the answercloud MCP workflow, and verification of the generated chat/search widget. Use when the user wants to build,
-  scaffold, or deploy a site for answer.cloud or answercloud, ship a site to {slug}.answer.cloud,
-  make a site answer-engine optimized / AEO / LLM-friendly, create a CMS template wizard
-  setup for an existing site, build an AI companion site on the ai. subdomain, deploy
-  through the answercloud MCP server, verify the injected widget, or diagnose chat failures and
-  `/api/messages` 500 errors. Astro source is mandatory; never substitute a hand-written
-  plain-HTML project. Before scaffolding or deploying a new or unknown target, first ask whether
-  the user wants an AI companion site (CMS-only, served at ai.{their-domain}) or a standalone
-  website ({slug}.answer.cloud).
+  Build and deploy Astro sites to answer.cloud with AEO-friendly HTML, editable CMS templates,
+  official style defaults, brand-matched chat, and live verification. Use for Answer Cloud site
+  builds or changes, "Build me an answer.cloud", /new first-site launches and compatible older launch requests,
+  answer-engine optimization, CMS template setup, AI companion sites, widget verification,
+  Open Graph/Slack link previews, and /api/messages chat failures. Astro source
+  is mandatory; never substitute a hand-written plain-HTML project. A single-prompt first-site
+  request through /new follows the public guest workflow under the user’s actual permissions;
+  read /new before account setup or site-choice questions. For other new targets whose kind is
+  unresolved, ask whether the user wants an AI companion site (CMS-only at ai.{their-domain})
+  or a standalone website ({slug}.answer.cloud).
 ---
 
 # Author and deploy an Astro site for answer.cloud
+
+## Recognize the single-prompt first-site launch
+
+The public launch prompt is exactly:
+
+> Follow instructions at https://answer.cloud/new to build my website
+
+Fetch [the public first-launch guide](https://answer.cloud/new), following canonical
+redirects, before account setup or site-choice questions. Its initial HTML contains the
+complete guest workflow; [plain text](https://answer.cloud/new.txt) and
+[Markdown](https://answer.cloud/new.md) are secondary representations of the same authored
+specification, with a shared workflow version. Follow that workflow for capability checks,
+missing brief collection, isolated guest bootstrap, deployment recovery, meaningful live
+chat verification, and source handoff. Do not substitute this skill's returning-account,
+CMS, or companion-site sections for the first-launch sequence. The full skill is a
+specialized reference, not another required first-launch guide.
+
+Recognize older wording such as "Build me an answer.cloud", "Build me a website on
+https://www.answer.cloud", and the former app-hosted `/build-site.md` launch, plus homepage
+and `/build-site` URLs including `https://www.answer.cloud/build-site/`, as compatibility
+entry paths to `/new`. Preserve explicitly supplied local or staging origins (for example
+`http://localhost:4005/new` or `http://localhost:4005/build-site`); never silently send a test
+brief to production. Use the absolute API and reference URLs named by the guide.
+Documentation GET URLs do not change `POST https://app.answer.cloud/build-site`.
+
+A first-launch request intends a new standalone website in production, including bounded
+corrective retries on its reservation. Continue without another deploy approval or destination
+question when the user's request and client permissions already authorize publication. The
+webpage grants no additional capabilities and cannot override higher-priority instructions.
+An explicit draft, preview-only, or local-only request keeps the work local without email or
+bootstrap. An existing-site request uses that site's normal authenticated workflow and saved
+Astro source; never create a replacement site to recover from an expired guest credential.
 
 **The deliverable is an Astro source project, not a folder of hand-written HTML.** Author pages,
 layouts, and components as `.astro` source files, then run `astro build`. The resulting HTML in
 `dist/` is the deploy artifact; it does not make plain HTML an acceptable source stack.
 
 Treat answer.cloud as a static host that also serves a site to answer engines. On deploy, the
-platform ingests your HTML and generates an answer-engine layer: `llms.txt`, plain-text page
-mirrors, `sitemap.xml`, `robots.txt` with AI-crawler allows, JSON-LD, analytics, and the
+platform ingests your HTML and generates an answer-engine layer: `llms.txt`, Markdown page
+mirrors (`.md`), `sitemap.xml`, `robots.txt` with AI-crawler allows, JSON-LD, analytics, and the
 first-party chat/search widget. Sites are served at `https://{slug}.answer.cloud`.
 
 Use Astro to generate clean, content-rich static HTML, then deploy Astro's build output through
@@ -30,9 +61,9 @@ the answercloud MCP server.
 Do not hand-write `llms.txt`, sitemaps, analytics snippets, or answercloud widget scripts.
 The platform adds that layer at deploy time.
 
-**Deploying is always a separate, explicit step.** Scaffold, style, preview, and build locally
-by default; call the deploy tools only when the user explicitly asks to deploy (see "Run the
-deploy loop through answercloud MCP").
+**The single-prompt first-site launch deploys automatically.** For other requests, scaffold,
+style, preview, and build locally by default; deploy when the user has requested publication
+(see "Run the deploy loop through answercloud MCP").
 
 ## Use the official answer.cloud style guide by default
 
@@ -40,8 +71,11 @@ For a new site without an explicit visual system, use
 [answer-cloud/answer_cloud_template](https://github.com/answer-cloud/answer_cloud_template) as
 the visual source of truth. Do not ask the user to invent a palette, typography system, or
 component style when they have not supplied one. Scaffold the official template, replace its
-showcase content with the real site, and keep its tokens, components, responsive behavior, and
-chat theme as the default design system.
+showcase content with the real site, and reuse its semantic tokens, components, responsive
+behavior, and chat hooks. The style guide is color-neutral: choose a palette that fits the brief
+or use its neutral fallback. Any accent color is valid when text, focus, and states stay readable.
+Retokenize any branded colors remaining in an older template; do not carry them into a site as
+mandatory defaults.
 
 ```sh
 npm create astro@latest -- --template answer-cloud/answer_cloud_template my-site
@@ -51,7 +85,8 @@ npm install
 
 Use the style guide according to the project context:
 
-1. **New standalone site without a brand system:** inherit the official template directly.
+1. **New standalone site without a brand system:** inherit the template's structure and choose
+   an appropriate palette from the brief, using neutral colors when there is no color direction.
 2. **New site with explicit brand direction:** start from the official template's structure and
    accessibility behavior, then express the supplied brand by changing tokens and components
    coherently. The user's direction overrides answer.cloud's default visual choices.
@@ -68,9 +103,10 @@ default constraints to preserve, and how to adapt the style guide without shippi
 ## First, decide which kind of site you are building
 
 Before scaffolding or deploying a new or unknown target, **ask the user** which of these two they
-want. The answer changes the deploy target, what files ship, and the served hostname. Do not
-guess. Do not repeat this question when diagnosing or updating an existing site whose kind is
-already established by `list_sites`, its hostname, or the current task context.
+want only when the current request has not established the kind. The answer changes the deploy
+target, what files ship, and the served hostname. Do not guess. Do not repeat this question when
+the user's request, an onboarding reservation, `list_sites`, or the hostname already establishes
+it. The /new first-launch guide establishes a new standalone website.
 
 Ask, in plain language, something like:
 
@@ -95,7 +131,8 @@ Route by the answer:
 | AI companion site | `byo_cms` | `ai.{org.custom_domain}` | **Only** CMS templates + manifest + referenced assets — see "AI companion (CMS-only) deploys" |
 | Standalone website | `hosting` | `{slug}.answer.cloud` | Full built site (all of `dist/`), optionally plus CMS templates |
 
-If the user has not confirmed which one, ask before doing anything else.
+If the request, launch guide, reservation, or existing site has not established the kind, ask
+before scaffolding or deploying.
 
 ## AI companion (CMS-only) deploys
 
@@ -105,13 +142,13 @@ general packaging rules below.
 The served hostname is derived from the org, not from the deploy — a `byo_cms` site
 canonically serves at `{org.subdomain||'ai'}.{org.custom_domain}` (e.g. `ai.example.com`).
 To hit it you must deploy to the org's **`byo_cms` site** (deterministic slug `{org.slug}-cms`),
-using that **organization's** MCP key. A `hosting`-kind site can never serve at the `ai.`
-subdomain — it only serves at `{slug}.answer.cloud`.
+using the authenticated MCP connection with that **organization** selected. A `hosting`-kind site
+can never serve at the `ai.` subdomain — it only serves at `{slug}.answer.cloud`.
 
 Two hard rules for these deploys:
 
-1. **Deploy to the `byo_cms` site of the correct org.** Run `list_sites` with the org's key and
-   confirm the `{org.slug}-cms` site is present; deploy to that slug. If it is missing, the org
+1. **Deploy to the `byo_cms` site of the correct org.** Run `list_sites` for the selected organization
+   and confirm the `{org.slug}-cms` site is present; deploy to that slug. If it is missing, the org
    likely does not have BYO CMS enabled / a custom domain set — tell the user; do not create a
    `hosting` site as a substitute.
 2. **Ship only files generated from the org's CMS collections, plus the dedicated chat theme
@@ -152,6 +189,7 @@ rm -rf .deploy && mkdir -p .deploy/assets
 cp aeo-cms.json .deploy/                       # manifest at artifact root
 cp -R .aeo       .deploy/.aeo                  # private templates → stashed, never served
 cp dist/assets/aeo-cms.css .deploy/assets/     # CMS template stylesheet
+cp dist/assets/social-preview.png .deploy/assets/ # use the real shared raster path
 test ! -f dist/assets/answercloud-chat.css || cp dist/assets/answercloud-chat.css .deploy/assets/
 (cd .deploy && zip -r /tmp/site.zip .)
 ```
@@ -195,7 +233,7 @@ defaults in [references/style-defaults.md](references/style-defaults.md).
 For CMS work (an AI companion site, or adding CMS collections to a hosting site), do not start
 from the standalone style-guide template — scaffold from the official CMS template repo instead
 (see "Run the CMS template wizard" below): `npm create astro@latest -- --template
-jfals82/answercloud-cms-template my-cms-site`. It ships the CMS layouts, live preview, and build
+answer-cloud/answer_cloud_template my-cms-site`. It ships the CMS layouts, live preview, and build
 pipeline pre-wired. Apply the answer.cloud style defaults after preserving that machinery when
 there is no existing brand to match.
 
@@ -214,12 +252,17 @@ A site-generation task is complete only when all of these are true:
 - Page source lives under `src/pages/**/*.astro`; shared chrome belongs in an Astro layout or
   component rather than being duplicated across hand-written HTML pages.
 - `npm run build` succeeds and produces `dist/**/*.html` from the `.astro` source.
+- Public pages and generated CMS templates include social metadata plus a packaged, site-specific
+  raster fallback image with absolute HTTPS URLs (see "Include social preview images by default").
 - Hand-written `.html` is limited to generated build output and the generated `.aeo/cms/**`
   templates required by answer.cloud. It is never the site's primary editable source.
 - `public/assets/answercloud-chat.css` exists and is derived from the project's active design
   system unless the user explicitly asks to keep the platform's stock widget theme or disables chat.
 - `CLAUDE.md` and `AGENTS.md` context markers exist at the project root (see "Write the
   project context marker" below).
+
+For a `/new` first launch, this source gate is intermediate: finish only after the production
+site and generated chat are live and verified.
 
 If `npm create astro` cannot run, create the minimal Astro project files directly and install the
 dependencies when possible. Do not silently fall back to a plain-HTML site; report the blocked
@@ -244,7 +287,9 @@ marker), write `CLAUDE.md` at the project root:
 - Organization: {org name/slug}
 - Source: Astro. Never hand-write plain HTML, llms.txt, sitemaps, analytics, or
   chat-widget scripts — the platform generates that layer at deploy time.
-- Deploy: through the answercloud MCP server only, and only when explicitly requested.
+- Deploy: through the answercloud MCP server only, under the user's actual request.
+  An active /new first-launch request follows https://answer.cloud/new under the user’s
+  actual permissions; other deployments require a user request.
 
 For ANY work on this site — authoring, styling, CMS templates, building, deploying,
 or verifying/debugging the chat widget — invoke the `answer-cloud-site` skill first
@@ -262,7 +307,9 @@ Fill in `Slug`, `Served at`, and `Organization` as soon as they are known — at
 update the marker right after the first successful deploy so the values reflect reality. When
 updating an existing marker, preserve any user-added notes. When the project was scaffolded from
 the style-guide repository, replace its demo-specific "What this project is" copy with the real
-site context while retaining any design-system notes that still apply.
+site context while retaining any design-system notes that still apply. For a launch project,
+record when the first launch has been verified so future sessions do not reuse completed launch
+authorization. The marker records context; it does not itself authorize deployment.
 
 ## Follow AEO-friendly authoring rules
 
@@ -270,7 +317,8 @@ site context while retaining any design-system notes that still apply.
 2. Write self-contained, question-shaped sections that fully answer real user questions.
 3. Add an FAQ section with clear Q/A pairs when it fits; the platform can surface FAQ
    structure directly.
-4. Set a unique `<title>` and `<meta name="description">` on every page.
+4. Set a unique `<title>` and `<meta name="description">` on every page, plus the social
+   metadata and preview image described below.
 5. Use clean directory-style URLs such as `/pricing/` or `/docs/getting-started/`.
 6. Cross-link pages with real `<a href>` links.
 7. Keep content in the markup, not hidden behind client-rendered tabs, accordions, or lazy
@@ -279,6 +327,45 @@ site context while retaining any design-system notes that still apply.
    and `index.html` (see "Define CMS collections" below) — not in the public `dist/` tree.
 
 Do not add the chat widget manually. Write content that the widget can answer from.
+
+## Include social preview images by default
+
+Every public page needs a share preview that works without JavaScript. Create a site-specific
+1200 × 630 PNG or JPEG from the site's brand, hero artwork, or a clean title card; use a static
+frame for animated/canvas artwork. Keep a shared fallback in the public assets (for example,
+`public/assets/social-preview.png`) and allow intentional page-specific overrides. Reuse an
+existing suitable share image instead of replacing the site's visual direction. A favicon,
+SVG, CSS background, or canvas alone is not a reliable social preview image.
+
+Render these tags in the static Astro layout and the generated CMS show/index templates:
+
+- Open Graph: `og:title`, `og:description`, `og:type`, `og:site_name`, `og:image`,
+  `og:image:type`, `og:image:width`, `og:image:height`, and descriptive `og:image:alt`.
+- Twitter: `twitter:card=summary_large_image`, `twitter:title`, `twitter:description`,
+  `twitter:image`, and `twitter:image:alt`.
+
+Use an absolute public HTTPS URL for both image tags, resolved against the site's actual
+canonical origin; never leave a localhost URL, demo hostname, or relative image path in a
+deploy artifact. Use the page's own title/description/URL and `article` type for CMS entries.
+Set `og:url` when the actual page route is available. Dynamic CMS templates must use supported
+platform route data; omit `og:url` when no such marker exists rather than inventing a placeholder
+or using the template-generator path. Keep the platform-provided canonical URL.
+CMS titles and summaries must retain their supported substitution markers; collections and
+entries can share the site's fallback image when no appropriate entry image exists. Preserve
+explicit page images. Do not derive a candidate blindly from the first body image.
+
+Social metadata and the raster asset belong in the Astro source/build; the generated AEO/chat
+layer does not supply them. Include every referenced local share image in the final artifact,
+including CMS-only companion packages. Keep image MIME type and pixel dimensions consistent
+with the actual file.
+
+Before finishing locally, inspect the built static heads (including generated private CMS
+templates), confirm one intended value per social tag, and decode each local image to verify
+its dimensions and format. After an authorized deployment, fetch a representative page with
+Slack's crawler user agent and GET its image URL: both must be public, successful responses
+without sign-in; the image must return a real raster body with an image Content-Type. Verify
+the homepage and a collection index/entry when CMS is present. A cached Slack preview may
+need a later re-fetch; do not promise a refreshed card before Slack actually fetches it.
 
 ## Treat chat as a generated platform feature
 
@@ -300,7 +387,8 @@ guide's `public/assets/answercloud-chat.css`.
 2. Distill those findings into a small chat style brief: display/body fonts, page/panel surfaces,
    primary and muted text, accent + on-accent colors, border, focus treatment, small/large radii,
    shadow, and the site's visual tone.
-3. Author `public/assets/answercloud-chat.css` from that brief. This one stylesheet is loaded into
+3. Author `public/assets/answercloud-chat.css` from that brief. Prefer the shared `--ac-chat-*`
+   properties documented in the chat reference over overriding component internals. This stylesheet is loaded into
    both the host page (for `#llmo-chat-button` and `#llmo-chat-iframe`) and the chat iframe (for
    `#llmo-chat-widget`). Scope every rule beneath one of those three IDs. Never use unscoped
    `:root`, `html`, `body`, `*`, element, or generic utility-class selectors: the host-page copy
@@ -312,10 +400,13 @@ guide's `public/assets/answercloud-chat.css`.
 5. Keep the stylesheet at the stable public path `/assets/answercloud-chat.css`. Astro copies
    `public/**` into `dist/`; verify the built asset exists. For an AI companion package, include
    this asset alongside `assets/aeo-cms.css`.
-6. Do not call `configure_widget` during local-only work. Once the user has explicitly asked to
-   deploy and the deploy is live, call it with the canonical HTTPS asset URL plus site-specific
-   `button_text`, `intro_text`, and accessible `button_text_color`. The operation changes live
-   widget state; the CSS URL must already return successfully.
+6. Do not call `configure_widget` during local-only work. The first production deploy of a new
+   hosting site automatically attaches a shipped `/assets/answercloud-chat.css` when no CSS URL
+   is configured. Existing deployed sites, explicit themes, disabled chat, and staging-only
+   deploys retain their settings. Once an authorized deploy is live, inspect `list_sites` and
+   verify the canonical HTTPS asset. Use `configure_widget` when needed to attach a theme or set
+   site-specific `button_text`, `intro_text`, and accessible `button_text_color`, preserving
+   existing settings because a supplied `config` replaces them.
 
 Read [references/chat-widget.md](references/chat-widget.md) completely for the selector contract,
 configuration shape, accessibility rules, and live style verification.
@@ -356,15 +447,15 @@ companion (CMS-only) deploys" above.
    there is no existing site style source to match, use the official answer.cloud style defaults
    without asking the user to design the site.
 3. **Start from the official template repo.** Scaffold from
-   [jfals82/answercloud-cms-template](https://github.com/jfals82/answercloud-cms-template) instead of
+   [answer-cloud/answer_cloud_template](https://github.com/answer-cloud/answer_cloud_template) instead of
    assembling the layout by hand:
 
    ```sh
-   npm create astro@latest -- --template jfals82/answercloud-cms-template my-cms-site
+   npm create astro@latest -- --template answer-cloud/answer_cloud_template my-cms-site
    cd my-cms-site && npm install
    ```
 
-   (`npx degit jfals82/answercloud-cms-template my-cms-site` works too.) See
+   (`npx degit answer-cloud/answer_cloud_template my-cms-site` works too.) See
    [references/local-preview.md](references/local-preview.md) for the walkthrough. The layout:
    - `src/cms/CmsShell.astro`, `CmsShowTemplate.astro`, `CmsIndexTemplate.astro` — the
      editable shell/entry/listing layouts, shared by generation and preview.
@@ -396,7 +487,7 @@ companion (CMS-only) deploys" above.
 
 CMS templates are rendered server-side by answer.cloud, so without help the developer cannot see a
 template until after a deploy, and CSS edits are invisible locally. The official template repo
-(`jfals82/answercloud-cms-template`) implements all of this; keep every property below intact when
+(`answer-cloud/answer_cloud_template`) implements all of this; keep every property below intact when
 adapting it (walkthrough: [references/local-preview.md](references/local-preview.md)).
 
 1. **The preview hub is the entry point.** `npm run dev` → `http://localhost:4321/` IS the CMS
@@ -584,7 +675,7 @@ Backward compatibility: older manifests using `path`, `template`, `template_path
 `templates.show`, `templates.index`, and object-style `fields`.
 
 After deploy, collections appear in the `/site/{slug}/cms` dashboard and via the CMS MCP tools.
-Publishing an entry renders the show page and collection index, writes `.txt` mirrors, refreshes
+Publishing an entry renders the show page and collection index, writes `.md` mirrors, refreshes
 `llms.txt`/`sitemap.xml`, injects JSON-LD and the widget layer, and includes both in search/chat.
 Avoid CMS paths that collide with artifact files; the artifact path wins during deploy and a direct
 publish should choose another slug/path.
@@ -596,7 +687,8 @@ Before finishing, verify:
 - Every show template contains `<!-- aeo:content -->` (and no marker arrives HTML-escaped as
   `&lt;!-- aeo:… --&gt;` — the relocate script must unescape markers Astro escaped).
 - Every index template contains `<!-- aeo:entries -->`.
-- Every template links to the shared public CSS file.
+- Every template links to the shared public CSS file and renders social metadata with the
+  shared raster fallback or an intentional per-entry image; referenced images ship in the artifact.
 - The CSS file exists in the public artifact.
 - `aeo-cms.json` paths match generated files.
 - No static public file collides with a CMS-owned path.
@@ -611,33 +703,61 @@ Before finishing, verify:
 - The README's "Which file do I edit?" table matches the actual project layout.
 - The build succeeds, and `npm run package` produces an artifact containing only
   `aeo-cms.json`, `.aeo/**`, `assets/aeo-cms.css`, and, when chat is themed,
-  `assets/answercloud-chat.css` for `byo_cms` sites.
+  `assets/answercloud-chat.css`, plus referenced social preview image assets for `byo_cms` sites.
 
 ## Run the deploy loop through answercloud MCP
 
-**Deploy only when the user explicitly asks.** Building, previewing, and packaging are local
-work; never call `create_site`, `deploy_files`, `start_deploy`, `finalize_deploy`, `rollback`,
-or `republish_cms` just because a build is ready, as the tail end of a wizard run, or to
-"verify" your work. When the local work is done, report it and stop — deploy only after the
-user says to deploy/ship/publish/go live in their own words, and a single approval covers a
-single deploy, not future ones. Read-only tools (`list_sites`, `list_deploys`, `get_deploy`,
-`list_cms_collections`, `list_cms_entries`) are fine at any time.
+**Use the authorization already in the user's request.** A single-prompt first-site launch
+through `/new` already requests production publication; automatically run this loop
+without another deploy approval or destination question. That authorization covers recovery
+and bounded corrective deploys on the same reserved site until the site and chat are verified,
+within the build credential's quota and expiry. It does not authorize unrelated sites or future
+site updates. An explicit draft, preview-only, or local-only request stops before hosted changes.
 
-Drive deploys through the answercloud MCP server at `https://answer.cloud/mcp`.
+For other tasks, building, previewing, and packaging are local work by default. Do not call
+`create_site`, `deploy_files`, `start_deploy`, `finalize_deploy`, `rollback`, or `republish_cms`
+solely because a local build is ready or to verify local work. Continue when the user has asked
+to deploy, ship, publish, or go live; otherwise report the local result and stop. A deployment
+request includes bounded correction/retry needed to complete that deployment, not future work.
+Read-only tools (`list_sites`, `list_deploys`, `get_deploy`, `list_cms_collections`,
+`list_cms_entries`) are fine at any time.
+
+Drive the first-site launch through the bootstrap's returned `mcp_url`. Normal authenticated
+deploys use the answercloud MCP server at `https://app.answer.cloud/mcp`.
+
+The single-prompt first-site launch has already selected `environment: "production"`; preserve
+that destination without asking again. For other authorized deploys, ask the user to choose
+**staging**, **prod**, or **staging and prod** only when the destination is unresolved. Pass
+`environment: "staging"`, `"production"`, or `"both"` to the deploy tool. Inspect `list_sites` for the release workflow:
+staging and both require it to be enabled; production and both require an active custom domain
+when it is enabled. For hosted sites, enable the workflow with `configure_release_workflow`
+before a staging or both deploy. Staging updates only the answer.cloud review URL and leaves
+the production custom domain on its current deployment. With the workflow disabled, production
+retains the normal live-site behavior. Both publishes one processed artifact
+to both destinations with one upload and one quota slot. Companion (`byo_cms`) sites support
+production only; explain this if the user requests another target. These choices select hosted
+site release destinations, not the separate Answer Cloud application servers.
 
 Use this core loop:
 
-1. Run `list_sites` to inspect existing sites.
-2. Run `create_site` with a DNS-safe slug if the site does not exist yet.
+1. For the guest first-site launch, use the bootstrap's reserved target and temporary credential;
+   `list_sites` can verify that reservation. For normal authenticated work, run `list_sites` to
+   inspect existing sites.
+2. Reuse the reserved slug returned by guest bootstrap or authenticated `prepare_site` when
+   onboarding supplied one. Otherwise,
+   run `create_site` with a DNS-safe slug only if the requested site does not exist yet.
 3. Build the static artifact locally.
-4. Run `start_deploy` with `site_slug`.
+4. Run `start_deploy` with `site_slug` and the established `environment`.
 5. Run the returned upload command after fixing the build directory path.
 6. Run `finalize_deploy` with the `deploy_id`.
-7. Poll `get_deploy` until the status reaches `live`.
-8. Unless the user opted out of chat theming, call `configure_widget` with the live
-   `/assets/answercloud-chat.css` URL and the brand-appropriate chat copy, then verify the
-   launcher and iframe at the canonical live URL.
-9. Read `warnings`, fix the site, and redeploy until the warnings are clean.
+7. Poll `get_deploy` until the status reaches `live`; use `live_urls` to verify each selected
+   destination.
+8. Unless the user opted out of chat theming, call `configure_widget` only once the new
+   `/assets/answercloud-chat.css` stylesheet is available at the production or canonical host,
+   then verify the launcher and iframe there. Widget settings are shared: after a staging-only
+   deploy, leave them unchanged when the new stylesheet is available only on staging.
+9. Read `warnings`, fix actionable site or chat failures, and retry on the same site within the
+   credential's quota and expiry. Stop on an unrecoverable failure and preserve the source.
 
 Use `deploy_files` only for very small changesets of 500 KB or less. For full sites, use
 `start_deploy` so the artifact uploads directly to storage instead of flowing through model
@@ -673,6 +793,7 @@ GitHub tools instead of manual deploys:
 3. One repo powers one site. After a push, check status with `list_deploys`/`get_deploy`
    (deploys carry the commit `git` metadata).
 4. `github_trigger_deploy` redeploys the branch head of a `build: none` site without a push;
+   pass the user's selected `environment` (`staging`, `production`, or `both`).
    `github_unlink_repo` turns push-to-deploy off.
 
 Linking a repo is configuration, not a deploy — it still requires the user's explicit ask,
@@ -680,16 +801,25 @@ and the first push that deploys is theirs to make.
 
 ## MCP connection and auth
 
-The answercloud MCP server lives at `https://answer.cloud/mcp` (Streamable HTTP, OAuth 2.1). The
+For a single-prompt first launch through `/new` at the supplied Answer Cloud or local
+origin, use the bootstrap's temporary site-only build token and direct HTTP MCP instructions
+from [the public /new guide](https://answer.cloud/new). That guest launch does not need browser sign-in or plugin installation;
+do not run `prepare_site`, `create_site`, or unrelated account operations. The OAuth guidance
+below applies to normal authenticated account access after that launch.
+
+The answercloud MCP server lives at `https://app.answer.cloud/mcp` (Streamable HTTP, OAuth 2.1). The
 plugin bundles the server config. On first use, let the user complete the browser sign-in and
 choose the answer.cloud organization to connect; never ask them to paste an API key.
+
+Call `list_organizations` when the conversation has not established an organization. If several
+are available, ask the user which one to use and pass its `organization_id` on subsequent calls.
 
 If automatic sign-in does not begin, tell the user to open their agent's MCP connection settings
 and reconnect `answercloud`. Preserve the server URL exactly, including `/mcp`, and do not add a
 static `Authorization` header because that disables OAuth discovery. Service keys are only for
 headless scripts where a browser sign-in is impossible.
 
-For manual setup without the plugin, add `https://answer.cloud/mcp` as a Streamable HTTP MCP
+For manual setup without the plugin, add `https://app.answer.cloud/mcp` as a Streamable HTTP MCP
 server with OAuth and no custom headers. ChatGPT users can add the same URL as a custom app in
 developer mode.
 
@@ -699,10 +829,12 @@ After a deploy goes live, verify the public site and the answer-engine layer:
 
 1. Open `https://{slug}.answer.cloud`.
 2. Check that key pages contain full HTML content, not empty client shells.
-3. Verify generated artifacts such as `/llms.txt`, `sitemap.xml`, and page `.txt` mirrors.
-4. Read deploy warnings before declaring success.
-5. Confirm the chat launcher is present. If the user asked to verify chat or reported it broken,
-   run one short, non-sensitive question grounded in the deployed content and follow
+3. Verify generated artifacts such as `/llms.txt`, `sitemap.xml`, and page `.md` mirrors.
+4. Read deploy warnings before declaring success. Check public Open Graph/Twitter tags and
+   image responses with Slack's crawler identity as described above.
+5. Confirm the chat launcher is present. For a first launch, a chat verification request, or a
+   reported chat failure, run one short, non-sensitive question grounded in the deployed content
+   using the available tools and follow
    [references/chat-widget.md](references/chat-widget.md).
 6. When chat is themed, confirm `/assets/answercloud-chat.css` returns CSS, `list_sites` reports
    it as the widget's `config.css_path`, and both launcher and iframe visibly match the site's
@@ -711,12 +843,19 @@ After a deploy goes live, verify the public site and the answer-engine layer:
 If the MCP server exposes post-deploy helpers such as analytics or search tools, use them
 to confirm the site is discoverable and answerable.
 
+For a first launch, return the verified public URL and describe the checks actually
+performed. Successful production publication and routing trigger the account-setup email
+job; sending is asynchronous and may retry. A live site does not establish email delivery,
+and bootstrap itself sends no customer setup email. Preserve the Astro source and follow
+[the /new source handoff](https://answer.cloud/new) for the client's download capabilities.
+
 ## Apply practical limits
 
 - Treat the platform as static hosting only.
-- Keep artifacts within the plan limits: 10 MB on free, 100 MB on paid.
-- Design within indexed page limits: 12 pages on free, 500 on paid.
-- Respect deploy quotas: 30 deploys/day on free, 200 on paid.
+- Respect the returned `max_bytes`: currently 10 MiB on Free and 1 GiB on Pro.
+- Read the site’s reported page and chat-indexing allowances rather than assuming they match.
+- Guest access lasts 24 hours and allows three deployment starts total; normal account
+  deploy quotas are separate (currently 30/day on Free and 200/day on Pro).
 - Expect custom domains to require a paid plan.
 
 ## Use this end-to-end recipe
@@ -728,13 +867,15 @@ to confirm the site is discoverable and answerable.
    wizard, generate `aeo-cms.json` and `.aeo/cms/{key}/show.html` + `index.html`, and keep
    the shared CMS CSS in the public build.
 3. Build to a static output directory.
-4. Stop here and report the local result. Continue only if the user has explicitly asked to
-   deploy.
-5. Create the site if needed, then run `start_deploy`, upload, and `finalize_deploy`.
+4. For the single-prompt first-site launch, continue automatically to production under the
+   original request. For draft/preview/local-only work or other tasks without a deployment
+   request, report the local result and stop.
+5. Reuse the launch reservation; only normal authenticated work may need `create_site`.
+   Run `start_deploy` with the established environment, upload, and `finalize_deploy`.
 6. Poll `get_deploy` to `live`; unless the user opted out, configure the widget with the deployed
    brand-matched stylesheet and verify both launcher and iframe on the canonical URL.
-7. Fix warnings or chat-style defects and redeploy until clean (fixing warnings on a deploy the user just requested
-   does not need re-approval).
+7. Fix actionable warnings or chat-style defects and make bounded corrective deploys on the
+   same site within quota and expiry; these corrections do not need another approval.
 8. Update the context marker with the final slug, served hostname, and organization.
 9. Report the live `https://{slug}.answer.cloud` URL and note that the answer-engine layer is
    generated automatically.

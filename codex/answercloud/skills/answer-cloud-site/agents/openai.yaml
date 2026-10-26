@@ -8,4 +8,4 @@ dependencies:
       value: "answercloud"
       description: "answer.cloud hosting + CMS MCP server"
       transport: "streamable_http"
-      url: "https://answer.cloud/mcp"
+      url: "https://app.answer.cloud/mcp"

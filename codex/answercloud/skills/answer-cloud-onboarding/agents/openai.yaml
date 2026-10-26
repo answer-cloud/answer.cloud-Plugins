@@ -1,0 +1,4 @@
+interface:
+  display_name: "Answer Cloud Onboarding"
+  short_description: "Start a website with a short launch wizard"
+  default_prompt: "Follow instructions at https://answer.cloud/new to build my website"

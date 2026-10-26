@@ -1,7 +1,7 @@
 {
   "name": "answercloud",
-  "description": "Author and deploy AEO-friendly static sites with official answer.cloud style defaults and brand-matched AI chat. Connect securely with your answer.cloud account—no API key setup required.",
-  "version": "1.0.1",
+  "description": "Launch a website from one prompt: share your email, organization name, and brief, then build and publish with temporary site-only access. Finish account setup by email afterward.",
+  "version": "1.1.0",
   "author": {
     "name": "answer.cloud",
     "email": "jared@edgarallan.com"
@@ -9,5 +9,13 @@
   "homepage": "https://answer.cloud",
   "repository": "https://github.com/answer-cloud/answer.cloud-Plugins",
   "license": "MIT",
-  "keywords": ["answer-cloud", "aeo", "static-site", "hosting", "cms", "astro", "answer-engine-optimization"]
+  "keywords": [
+    "answer-cloud",
+    "aeo",
+    "static-site",
+    "hosting",
+    "cms",
+    "astro",
+    "answer-engine-optimization"
+  ]
 }

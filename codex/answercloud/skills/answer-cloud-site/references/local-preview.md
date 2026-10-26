@@ -1,17 +1,17 @@
-# The official CMS template (jfals82/answercloud-cms-template)
+# The official CMS template (answer-cloud/answer_cloud_template)
 
 A complete, tested Astro project hosted at
-[github.com/jfals82/answercloud-cms-template](https://github.com/jfals82/answercloud-cms-template).
+[github.com/answer-cloud/answer_cloud_template](https://github.com/answer-cloud/answer_cloud_template).
 It is the required starting point for any answer.cloud CMS work — scaffold it, don't rebuild it:
 
 ```sh
-npm create astro@latest -- --template jfals82/answercloud-cms-template my-cms-site
+npm create astro@latest -- --template answer-cloud/answer_cloud_template my-cms-site
 cd my-cms-site
 npm install
 npm run dev     # → http://localhost:4321/ is the CMS preview hub
 ```
 
-(`npx degit jfals82/answercloud-cms-template my-cms-site` or a plain `git clone` also work.)
+(`npx degit answer-cloud/answer_cloud_template my-cms-site` or a plain `git clone` also work.)
 
 Modeled on Astro's blog example: you edit source files, everything live-reloads, `npm run
 build` emits the deployable output.

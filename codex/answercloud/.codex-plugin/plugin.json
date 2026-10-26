@@ -1,7 +1,7 @@
 {
   "name": "answercloud",
-  "version": "1.0.0+codex.20260904212550",
-  "description": "Author and deploy AEO-friendly static sites with official answer.cloud style defaults and brand-matched AI chat. Connect securely with your answer.cloud account\u2014no API key setup required.",
+  "version": "1.1.0",
+  "description": "Launch a website from one prompt: share your email, organization name, and brief, then build and publish with temporary site-only access. Finish account setup by email afterward.",
   "author": {
     "name": "answer.cloud",
     "email": "jared@edgarallan.com",
@@ -23,8 +23,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Answer Cloud",
-    "shortDescription": "Build AEO sites with official style defaults",
-    "longDescription": "Build AEO-friendly static sites with Astro, use the official answer.cloud style guide for unbranded site and CMS defaults, derive chat styles from the active design system, and deploy to {slug}.answer.cloud or an ai. companion subdomain through the answercloud MCP workflow. answer.cloud generates the answer-engine layer (llms.txt, sitemaps, JSON-LD, text mirrors, chat widget) at deploy time.",
+    "shortDescription": "Launch a website from one prompt",
+    "longDescription": "Start with the public guide at https://answer.cloud/build-site. Its wizard asks for your email, organization name, and website brief, reserves an isolated first site, and builds and publishes an Astro website with temporary site-only access. Finish account setup from your email afterward. The optional plugin bundles the launch workflow and the authenticated tools for subsequent site changes, editable CMS collections, and AI companion sites.",
     "developerName": "answer.cloud",
     "category": "Developer Tools",
     "capabilities": [
@@ -34,6 +34,7 @@
     ],
     "websiteURL": "https://answer.cloud",
     "defaultPrompt": [
+      "Build me a website on https://answer.cloud/build-site.",
       "Build and deploy an AEO-friendly static site using the official answer.cloud style defaults",
       "Set up editable CMS collection templates for my site",
       "Create an AI companion site for my existing website",

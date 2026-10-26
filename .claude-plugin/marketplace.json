@@ -1,6 +1,6 @@
 {
   "name": "answercloud",
-  "description": "Official answer.cloud plugins — author, CMS-configure, and deploy AEO-friendly static sites",
+  "description": "Answer Cloud plugins — optional tools for a website launch wizard and subsequent site management",
   "owner": {
     "name": "answer.cloud",
     "email": "jared@edgarallan.com"
@@ -10,14 +10,24 @@
       "name": "answercloud",
       "displayName": "Answer Cloud",
       "source": "./claude/answercloud",
-      "description": "Author and deploy AEO-friendly static sites, then connect securely with your answer.cloud account—no API key setup required.",
-      "version": "1.0.1",
-      "author": { "name": "answer.cloud" },
+      "description": "Launch a website from one prompt: share your email, organization name, and brief, then build and publish with temporary site-only access. Finish account setup by email afterward.",
+      "version": "1.1.0",
+      "author": {
+        "name": "answer.cloud"
+      },
       "homepage": "https://answer.cloud",
       "repository": "https://github.com/answer-cloud/answer.cloud-Plugins",
       "license": "MIT",
       "category": "web",
-      "keywords": ["answer-cloud", "aeo", "static-site", "hosting", "cms", "astro", "answer-engine-optimization"]
+      "keywords": [
+        "answer-cloud",
+        "aeo",
+        "static-site",
+        "hosting",
+        "cms",
+        "astro",
+        "answer-engine-optimization"
+      ]
     }
   ]
 }

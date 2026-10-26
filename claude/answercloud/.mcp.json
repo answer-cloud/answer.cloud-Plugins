@@ -2,7 +2,7 @@
   "mcpServers": {
     "answercloud": {
       "type": "http",
-      "url": "https://answer.cloud/mcp"
+      "url": "https://app.answer.cloud/mcp"
     }
   }
 }
